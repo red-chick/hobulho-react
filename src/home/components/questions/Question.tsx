@@ -6,7 +6,6 @@ import {
   ThumbsUpIcon,
   ThumbsDownIcon,
   IconWrapper,
-  LikedBar,
   Liked,
   UnLiked,
   SmallThumbsUpIcon,

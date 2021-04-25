@@ -11,7 +11,7 @@ const Questions = () => {
   useEffect(() => {
     const questionsRef = db.collection("questions");
 
-    questionsRef.orderBy("createdAt").onSnapshot((snapshot) => {
+    questionsRef.orderBy("createdAt", "desc").onSnapshot((snapshot) => {
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -29,7 +29,9 @@ const Questions = () => {
         ? questions.map((question) => (
             <Question key={question.id} question={question} db={db} />
           ))
-        : [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => <SkeletonQuestion key={i} />)}
+        : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
+            <SkeletonQuestion key={i} />
+          ))}
     </QuestionsContainer>
   );
 };
