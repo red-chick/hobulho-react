@@ -17,7 +17,6 @@ const Login = () => {
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const [confirmationState, confirmationDispatch] = useConfirmationReducer();
   const [loginState, loginDispatch] = useLoginReducer();
-  const authInput = useRef(null);
 
   useEffect(() => {
     setRecaptchaVerifier(newRecaptchaVerifier());
@@ -49,7 +48,7 @@ const Login = () => {
         <Label>
           <Input
             type="text"
-            placeholder="'-' 없이 입력"
+            placeholder="'-' 없이 입력해주세요"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
@@ -67,12 +66,9 @@ const Login = () => {
           <Label>
             <Input
               type="text"
-              placeholder="인증번호 6자리"
+              placeholder="인증번호 6자리를 입력해주세요"
               value={auth}
               onChange={(e) => setAuth(e.target.value)}
-              ref={(authInput) => {
-                if (confirmationState.result) authInput.focus();
-              }}
             />
           </Label>
           <Button type="submit">로그인</Button>
