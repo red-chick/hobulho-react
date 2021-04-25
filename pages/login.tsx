@@ -13,14 +13,6 @@ const login = () => {
       <Head>
         <title>로그인 - 호불호</title>
         <meta property="og:title" content="로그인 - 호불호" />
-        <meta
-          name="description"
-          content="호불호 응답하고 사람들의 생각을 알아보세요!"
-        />
-        <meta
-          property="og:description"
-          content="호불호 응답하고 사람들의 생각을 알아보세요!"
-        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Title>전화번호로 로그인</Title>
