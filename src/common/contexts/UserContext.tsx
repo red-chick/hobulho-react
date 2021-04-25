@@ -75,18 +75,6 @@ const userReducer: Reducer<StateType, ActionType> = (
   }
 };
 
-type UserContextValue = {
-  state: StateType;
-  dispatch: Dispatch<ActionType>;
-  logout: Function;
-};
-
-const UserContext = createContext<UserContextValue>({} as UserContextValue);
-
-type Props = {
-  children: ReactNode;
-};
-
 export const dispatchGetUser = (dispatch: Dispatch<ActionType>): void => {
   dispatch({ type: GET_USER_NO_AUTH });
 };
@@ -107,6 +95,18 @@ export const dispatchGetUserError = (
 
 export const dispatchGetUserNoAuth = (dispatch: Dispatch<ActionType>): void => {
   dispatch({ type: GET_USER_NO_AUTH });
+};
+
+type UserContextValue = {
+  state: StateType;
+  dispatch: Dispatch<ActionType>;
+  logout: Function;
+};
+
+const UserContext = createContext<UserContextValue>({} as UserContextValue);
+
+type Props = {
+  children: ReactNode;
 };
 
 export const UserContextProvider: React.FC<Props> = ({ children }: Props) => {

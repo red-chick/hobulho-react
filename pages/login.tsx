@@ -7,20 +7,6 @@ const Login = dynamic(() => import("../src/login/components/Login"), {
   ssr: false,
 });
 
-const Wrapper = styled.section`
-  min-height: calc(100% - ${(props) => props.theme.headerHeight});
-  padding-top: 100px;
-  text-align: center;
-`;
-
-const Title = styled.h1`
-  margin-bottom: 10px;
-`;
-
-const Paragraph = styled.p`
-  margin-bottom: 20px;
-`;
-
 const login = () => {
   return (
     <Wrapper>
@@ -39,5 +25,19 @@ const login = () => {
     </Wrapper>
   );
 };
+
+const Wrapper = styled.section`
+  min-height: calc(100% - ${(props) => props.theme.headerHeight});
+  padding-top: 100px;
+  text-align: center;
+`;
+
+const Title = styled.h1`
+  margin-bottom: 10px;
+`;
+
+const Paragraph = styled.p`
+  margin-bottom: 20px;
+`;
 
 export default login;
