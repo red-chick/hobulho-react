@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { firebaseApp, newRecaptchaVerifier } from "../../common/utils/firebase";
 
@@ -17,10 +17,15 @@ const Login = () => {
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const [confirmationState, confirmationDispatch] = useConfirmationReducer();
   const [loginState, loginDispatch] = useLoginReducer();
+  const authInput = useRef(null);
 
   useEffect(() => {
     setRecaptchaVerifier(newRecaptchaVerifier());
   }, []);
+
+  useEffect(() => {
+    if (confirmationState.result) authInput.current.focus();
+  }, [confirmationState]);
 
   const onPhoneNumberAuth = (e) => {
     e.preventDefault();
@@ -69,6 +74,7 @@ const Login = () => {
               placeholder="인증번호 6자리"
               value={auth}
               onChange={(e) => setAuth(e.target.value)}
+              ref={authInput}
             />
           </Label>
           <Button type="submit">로그인</Button>
