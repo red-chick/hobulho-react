@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { ThemeProvider } from "styled-components";
 
 import Header from "../src/common/components/Header";

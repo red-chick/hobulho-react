@@ -111,7 +111,7 @@ type Props = {
 
 export const UserContextProvider: React.FC<Props> = ({ children }: Props) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
-  const firebaseAppRef = useRef<any>(); //FIXME: 동적 import 때문에 firebase type 을 import 할 수가 없음
+  const firebaseAppRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {

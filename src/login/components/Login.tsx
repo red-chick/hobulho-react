@@ -1,13 +1,14 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Button } from "../../common/styles/Button.style";
 
 import { firebaseApp, newRecaptchaVerifier } from "../../common/utils/firebase";
 
 import useConfirmationReducer from "../hooks/useConfimationReducer";
 import useLoginReducer from "../hooks/useLoginReducer";
-import { Form, Input, Label, LoadingFullModal } from "./Login.style";
+
+import { LoadingFullModal, Paragraph } from "./Login.style";
+import { Button } from "../../common/styles/Button.style";
+import { Form, Input, Label } from "../../common/styles/Form.style";
 
 const Login = () => {
   const router = useRouter();
@@ -56,9 +57,9 @@ const Login = () => {
           {confirmationState.result ? "재요청" : "인증 요청"}
         </Button>
       </Form>
-      {confirmationState.loading && <p>인증 요청중입니다..</p>}
+      {confirmationState.loading && <Paragraph>인증 요청중입니다..</Paragraph>}
       {confirmationState.error && (
-        <p>에러가 발생했습니다. 잠시 후 다시 시도해주세요.</p>
+        <Paragraph>에러가 발생했습니다. 잠시 후 다시 시도해주세요.</Paragraph>
       )}
       {confirmationState.result && (
         <Form onSubmit={onAuthCode}>
