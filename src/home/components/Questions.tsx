@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../common/utils/firebase";
 import Question from "./questions/Question";
 import { QuestionsContainer } from "./Questions.style";
+import SkeletonQuestion from "./questions/SkeletonQuestion";
 
 const Questions = () => {
   const [questions, setQuestions] = useState([]);
@@ -24,9 +25,11 @@ const Questions = () => {
 
   return (
     <QuestionsContainer>
-      {questions.map((question) => (
-        <Question key={question.id} question={question} db={db} />
-      ))}
+      {questions.length > 0
+        ? questions.map((question) => (
+            <Question key={question.id} question={question} db={db} />
+          ))
+        : [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => <SkeletonQuestion key={i} />)}
     </QuestionsContainer>
   );
 };
