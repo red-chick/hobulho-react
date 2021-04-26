@@ -12,6 +12,9 @@ import {
   SmallThumbsDownIcon,
   LeftCount,
   RightCount,
+  TrashIcon,
+  TitleWrapper,
+  Title,
 } from "./Question.style";
 
 const Question = ({ question, db }) => {
@@ -59,9 +62,16 @@ const Question = ({ question, db }) => {
     });
   };
 
+  const remove = () => {
+    db.collection("questions").doc(question.id).delete();
+  };
+
   return (
     <Item>
-      <section>{question.title}</section>
+      <TitleWrapper>
+        <Title>{question.title}</Title>
+        {question.uid === uid && <TrashIcon onClick={remove} />}
+      </TitleWrapper>
       <IconWrapper>
         {isAnswered ? (
           <>

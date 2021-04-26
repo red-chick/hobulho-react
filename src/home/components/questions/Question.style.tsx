@@ -12,6 +12,31 @@ export const Item = styled.li`
   padding: 16px;
 `;
 
+export const TitleWrapper = styled.section`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const Title = styled.section`
+  flex-shrink: 1;
+`;
+
+export const TrashIcon = styled.i`
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background-size: cover;
+  display: inline-block;
+  margin-left: 8px;
+  background: url("images/trash-alt-solid.svg") no-repeat;
+  cursor: pointer;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.1);
+  }
+`;
+
 export const IconWrapper = styled.section`
   display: flex;
   justify-content: space-between;
