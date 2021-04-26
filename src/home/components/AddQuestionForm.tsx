@@ -22,7 +22,10 @@ const AddQuestionForm = () => {
   const addQuestion = (e) => {
     e.preventDefault();
 
-    if (!question) return;
+    if (question.length < 5) {
+      alert("다섯 글자 이상 입력해 주세요.");
+      return;
+    }
 
     dbRef.current
       .collection("questions")
