@@ -62,9 +62,10 @@ export const ThumbsUpIcon = styled(ThumbsIcon)`
 export const ThumbsDownIcon = styled(ThumbsIcon)`
   background: url("images/thumbs-down-solid.svg") no-repeat;
   cursor: pointer;
+  transform: rotateY(180deg);
   &:hover {
     transition: all 0.2s ease-in-out;
-    transform: scale(1.1);
+    transform: rotateY(180deg) scale(1.1);
   }
 `;
 
@@ -103,7 +104,7 @@ export const Liked = styled.div<LikedType>`
   padding: 4px;
 `;
 
-export const UnLiked = styled(Liked)`
+export const DisLiked = styled(Liked)`
   background: ${(props) => props.theme.red};
   text-align: right;
 `;
