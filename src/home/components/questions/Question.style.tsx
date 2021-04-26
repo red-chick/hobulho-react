@@ -47,12 +47,17 @@ export const SmallThumbsUpIcon = styled(ThumbsIcon)`
   background: url("images/thumbs-up-solid.svg") no-repeat;
   width: 12px;
   height: 12px;
+  margin: 0 4px;
 `;
 
 export const SmallThumbsDownIcon = styled(ThumbsIcon)`
   background: url("images/thumbs-down-solid.svg") no-repeat;
+  transform: rotateY(180deg);
   width: 12px;
   height: 12px;
+  position: absolute;
+  top: 7px;
+  right: 8px;
 `;
 
 export const LikedBar = styled.section`
@@ -65,11 +70,27 @@ type LikedType = {
 };
 
 export const Liked = styled.div<LikedType>`
-  background: lightskyblue;
+  position: relative;
+  background: ${(props) => props.theme.green};
+  z-index: ${(props) =>
+    `${(props.size / props.fullSize) * 100 > 50 ? "1" : "2"}`};
   width: ${(props) => `${(props.size / props.fullSize) * 100}%`};
+  padding: 4px;
 `;
 
 export const UnLiked = styled(Liked)`
-  background: crimson;
+  background: ${(props) => props.theme.red};
   text-align: right;
+`;
+
+export const LeftCount = styled.span`
+  position: absolute;
+  left: 24px;
+  top: 4px;
+`;
+
+export const RightCount = styled.span`
+  position: absolute;
+  right: 24px;
+  top: 4px;
 `;

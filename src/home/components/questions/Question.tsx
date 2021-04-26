@@ -10,6 +10,8 @@ import {
   UnLiked,
   SmallThumbsUpIcon,
   SmallThumbsDownIcon,
+  LeftCount,
+  RightCount,
 } from "./Question.style";
 
 const Question = ({ question, db }) => {
@@ -63,16 +65,14 @@ const Question = ({ question, db }) => {
       <IconWrapper>
         {isAnswered ? (
           <>
-            {likedSize > 0 && (
-              <Liked size={likedSize} fullSize={answersSize}>
-                <SmallThumbsUpIcon /> {likedSize}
-              </Liked>
-            )}
-            {unLikedSize > 0 && (
-              <UnLiked size={unLikedSize} fullSize={answersSize}>
-                {unLikedSize} <SmallThumbsDownIcon />
-              </UnLiked>
-            )}
+            <Liked size={likedSize} fullSize={answersSize}>
+              <SmallThumbsUpIcon />
+              <LeftCount>{likedSize}</LeftCount>
+            </Liked>
+            <UnLiked size={unLikedSize} fullSize={answersSize}>
+              <RightCount>{unLikedSize}</RightCount>
+              <SmallThumbsDownIcon />
+            </UnLiked>
           </>
         ) : (
           <>

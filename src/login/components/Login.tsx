@@ -71,7 +71,9 @@ const Login = () => {
               onChange={(e) => setAuth(e.target.value)}
             />
           </Label>
-          <Button type="submit">로그인</Button>
+          <Button color="green" type="submit">
+            로그인
+          </Button>
         </Form>
       )}
       {loginState.loading && (
