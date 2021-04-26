@@ -22,6 +22,8 @@ const AddQuestionForm = () => {
   const addQuestion = (e) => {
     e.preventDefault();
 
+    if (!question) return;
+
     dbRef.current
       .collection("questions")
       .add({ uid, title: question, createdAt: Date.now() });
