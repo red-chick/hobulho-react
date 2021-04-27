@@ -12,6 +12,31 @@ export const Item = styled.li`
   padding: 16px;
 `;
 
+export const TitleWrapper = styled.section`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const Title = styled.section`
+  flex-shrink: 1;
+`;
+
+export const TrashIcon = styled.i`
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background-size: cover;
+  display: inline-block;
+  margin-left: 8px;
+  background: url("images/trash-alt-solid.svg") no-repeat;
+  cursor: pointer;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.1);
+  }
+`;
+
 export const IconWrapper = styled.section`
   display: flex;
   justify-content: space-between;
@@ -37,9 +62,10 @@ export const ThumbsUpIcon = styled(ThumbsIcon)`
 export const ThumbsDownIcon = styled(ThumbsIcon)`
   background: url("images/thumbs-down-solid.svg") no-repeat;
   cursor: pointer;
+  transform: rotateY(180deg);
   &:hover {
     transition: all 0.2s ease-in-out;
-    transform: scale(1.1);
+    transform: rotateY(180deg) scale(1.1);
   }
 `;
 
@@ -47,12 +73,17 @@ export const SmallThumbsUpIcon = styled(ThumbsIcon)`
   background: url("images/thumbs-up-solid.svg") no-repeat;
   width: 12px;
   height: 12px;
+  margin: 0 4px;
 `;
 
 export const SmallThumbsDownIcon = styled(ThumbsIcon)`
   background: url("images/thumbs-down-solid.svg") no-repeat;
+  transform: rotateY(180deg);
   width: 12px;
   height: 12px;
+  position: absolute;
+  top: 7px;
+  right: 8px;
 `;
 
 export const LikedBar = styled.section`
@@ -65,11 +96,27 @@ type LikedType = {
 };
 
 export const Liked = styled.div<LikedType>`
-  background: lightskyblue;
+  position: relative;
+  background: ${(props) => props.theme.green};
+  z-index: ${(props) =>
+    `${(props.size / props.fullSize) * 100 > 50 ? "1" : "2"}`};
   width: ${(props) => `${(props.size / props.fullSize) * 100}%`};
+  padding: 4px;
 `;
 
-export const UnLiked = styled(Liked)`
-  background: crimson;
+export const DisLiked = styled(Liked)`
+  background: ${(props) => props.theme.red};
   text-align: right;
+`;
+
+export const LeftCount = styled.span`
+  position: absolute;
+  left: 24px;
+  top: 4px;
+`;
+
+export const RightCount = styled.span`
+  position: absolute;
+  right: 24px;
+  top: 4px;
 `;

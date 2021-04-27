@@ -3,7 +3,7 @@ import { useUserContext } from "../../common/contexts/UserContext";
 import { Button } from "../../common/styles/Button.style";
 import { Form, Input, Label } from "../../common/styles/Form.style";
 
-const AddQuestionForm = () => {
+const AddQuestionForm = ({ getQuestions }) => {
   const {
     state: { uid },
   } = useUserContext();
@@ -29,7 +29,10 @@ const AddQuestionForm = () => {
 
     dbRef.current
       .collection("questions")
-      .add({ uid, title: question, createdAt: Date.now() });
+      .add({ uid, title: question, createdAt: Date.now() })
+      .then(() => {
+        getQuestions(dbRef.current);
+      });
 
     setQuestion("");
   };
