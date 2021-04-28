@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useMemo, useState, memo } from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 import { useUserContext } from "../../../common/contexts/UserContext";
 import { AnswerType, QuestionType } from "../../hooks/useQuestions";

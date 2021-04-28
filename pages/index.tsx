@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 import AddQuestionForm from "../src/home/components/AddQuestionForm";
 import Questions from "../src/home/components/Questions";

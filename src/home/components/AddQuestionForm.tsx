@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import firebase from "firebase";
+import { useState } from "react";
+import firebase from "firebase/app";
 
 import { useUserContext } from "../../common/contexts/UserContext";
 
