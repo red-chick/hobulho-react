@@ -6,35 +6,32 @@ import { useUserContext } from "../../common/contexts/UserContext";
 import { Button } from "../../common/styles/Button.style";
 import { Form, Input, Label } from "../../common/styles/Form.style";
 
-const AddQuestionForm = ({ getQuestions }) => {
+type Props = {
+  db: firebase.firestore.Firestore;
+  getQuestions: Function;
+  loadingQuestions: Function;
+};
+
+const AddQuestionForm = ({ db, getQuestions, loadingQuestions }: Props) => {
   const {
     state: { uid },
   } = useUserContext();
   const [question, setQuestion] = useState("");
-  const dbRef = useRef<firebase.firestore.Firestore>(null);
-
-  useEffect(() => {
-    const loadDB = async () => {
-      let { db } = await import("../../common/utils/firebase");
-      dbRef.current = db;
-    };
-
-    loadDB();
-  });
 
   const addQuestion = (e) => {
     e.preventDefault();
+
+    loadingQuestions();
 
     if (question.length < 5) {
       alert("다섯 글자 이상 입력해 주세요.");
       return;
     }
 
-    dbRef.current
-      .collection("questions")
+    db.collection("questions")
       .add({ uid, title: question, createdAt: Date.now(), answers: [] })
       .then(() => {
-        getQuestions(dbRef.current);
+        getQuestions(db);
       });
 
     setQuestion("");

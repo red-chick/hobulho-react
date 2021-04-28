@@ -38,9 +38,9 @@ function QuestionsReducer(
   switch (action.type) {
     case "LOADING":
       return {
+        ...state,
         loading: true,
         error: null,
-        ...state,
       };
     case "ERROR":
       return {
@@ -89,7 +89,11 @@ const useQuestions = () => {
       });
   };
 
-  return { questionsState, getQuestions, removeQuestion };
+  const loadingQuestions = () => {
+    questionsDispatch({ type: "LOADING" });
+  };
+
+  return { questionsState, getQuestions, removeQuestion, loadingQuestions };
 };
 
 export default useQuestions;

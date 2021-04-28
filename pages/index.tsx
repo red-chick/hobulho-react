@@ -14,7 +14,12 @@ export default function Home() {
     state: { uid },
   } = useUserContext();
 
-  const { questionsState, getQuestions, removeQuestion } = useQuestions();
+  const {
+    questionsState,
+    getQuestions,
+    removeQuestion,
+    loadingQuestions,
+  } = useQuestions();
   const { questions, loading, error } = questionsState;
 
   const dbRef = useRef<firebase.firestore.Firestore>(null);
@@ -44,14 +49,17 @@ export default function Home() {
     <Main>
       <Headline>호불호 응답하고 사람들의 생각을 알아보세요!</Headline>
       {uid ? (
-        <AddQuestionForm getQuestions={getQuestions} />
+        <AddQuestionForm
+          db={dbRef.current}
+          getQuestions={getQuestions}
+          loadingQuestions={loadingQuestions}
+        />
       ) : (
         <Paragraph>
           로그인 후 질문에 응답하면 해당 질문에 대한 사람들의 응답을 확인 하실
           수 있습니다.
         </Paragraph>
       )}
-      {loading && <Loading />}
       {questions.length > 0 && (
         <Questions
           questions={questions}
@@ -59,6 +67,7 @@ export default function Home() {
           db={dbRef.current}
         />
       )}
+      {loading && <Loading />}
     </Main>
   );
 }

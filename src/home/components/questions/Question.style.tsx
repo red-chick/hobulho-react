@@ -51,7 +51,7 @@ const ThumbsIcon = styled.i`
 `;
 
 export const ThumbsUpIcon = styled(ThumbsIcon)`
-  background: url("images/thumbs-up-solid.svg") no-repeat;
+  background: url("images/thumbs-up-solid-blue.svg") no-repeat;
   cursor: pointer;
   &:hover {
     transition: all 0.2s ease-in-out;
@@ -60,7 +60,7 @@ export const ThumbsUpIcon = styled(ThumbsIcon)`
 `;
 
 export const ThumbsDownIcon = styled(ThumbsIcon)`
-  background: url("images/thumbs-down-solid.svg") no-repeat;
+  background: url("images/thumbs-down-solid-red.svg") no-repeat;
   cursor: pointer;
   transform: rotateY(180deg);
   &:hover {
@@ -70,14 +70,22 @@ export const ThumbsDownIcon = styled(ThumbsIcon)`
 `;
 
 export const SmallThumbsUpIcon = styled(ThumbsIcon)`
-  background: url("images/thumbs-up-solid.svg") no-repeat;
+  background: url(${(props) =>
+      props.selected
+        ? "images/thumbs-up-solid-blue.svg"
+        : "images/thumbs-up-solid.svg"})
+    no-repeat;
   width: 12px;
   height: 12px;
   margin: 0 4px;
 `;
 
 export const SmallThumbsDownIcon = styled(ThumbsIcon)`
-  background: url("images/thumbs-down-solid.svg") no-repeat;
+  background: url(${(props) =>
+      props.selected
+        ? "images/thumbs-down-solid-red.svg"
+        : "images/thumbs-down-solid.svg"})
+    no-repeat;
   transform: rotateY(180deg);
   width: 12px;
   height: 12px;

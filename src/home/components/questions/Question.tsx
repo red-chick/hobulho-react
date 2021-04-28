@@ -30,10 +30,13 @@ type Props = {
 
 const getAnswerSizes = (
   answers: AnswerType[],
+  myAnswer: AnswerType,
   likeLength: number,
   selectedLike?: boolean
 ) => {
   const totalSize = answers.length;
+
+  if (myAnswer) return [totalSize, likeLength, totalSize - likeLength];
 
   if (selectedLike === true)
     return [totalSize + 1, likeLength + 1, totalSize - likeLength];
@@ -53,9 +56,9 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
 
   const { answers } = question;
 
-  const isAnswered = useMemo(() => {
-    if (!uid) return false;
-    return answers.some((answer) => answer.uid === uid);
+  const myAnswer = useMemo(() => {
+    if (!uid) return null;
+    return answers.filter((answer) => answer.uid === uid)[0];
   }, [answers, uid]);
 
   const likeLength = useMemo(
@@ -64,8 +67,8 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
   );
 
   const [totalSize, likeSize, dislikeSize] = useMemo(
-    () => getAnswerSizes(answers, likeLength, selectedLike),
-    [answers, selectedLike]
+    () => getAnswerSizes(answers, myAnswer, likeLength, selectedLike),
+    [answers, selectedLike, myAnswer]
   );
 
   const select = (like: boolean) => {
@@ -103,15 +106,19 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
         {question.uid === uid && <TrashIcon onClick={remove} />}
       </TitleWrapper>
       <IconWrapper>
-        {isAnswered || selectedLike !== null ? (
+        {myAnswer || selectedLike !== null ? (
           <>
             <Like size={likeSize} totalSize={totalSize}>
-              <SmallThumbsUpIcon />
+              <SmallThumbsUpIcon
+                selected={myAnswer ? myAnswer.like : selectedLike}
+              />
               <LeftCount>{likeSize}</LeftCount>
             </Like>
             <Dislike size={dislikeSize} totalSize={totalSize}>
               <RightCount>{dislikeSize}</RightCount>
-              <SmallThumbsDownIcon />
+              <SmallThumbsDownIcon
+                selected={myAnswer ? !myAnswer.like : !selectedLike}
+              />
             </Dislike>
           </>
         ) : (
