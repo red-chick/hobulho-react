@@ -90,21 +90,21 @@ export const LikedBar = styled.section`
   display: flex;
 `;
 
-type LikedType = {
+type LikeType = {
   size: number;
-  fullSize: number;
+  totalSize: number;
 };
 
-export const Liked = styled.div<LikedType>`
+export const Like = styled.div<LikeType>`
   position: relative;
   background: ${(props) => props.theme.green};
   z-index: ${(props) =>
-    `${(props.size / props.fullSize) * 100 > 50 ? "1" : "2"}`};
-  width: ${(props) => `${(props.size / props.fullSize) * 100}%`};
+    `${(props.size / props.totalSize) * 100 > 50 ? "1" : "2"}`};
+  width: ${(props) => `${(props.size / props.totalSize) * 100}%`};
   padding: 4px;
 `;
 
-export const DisLiked = styled(Liked)`
+export const Dislike = styled(Like)`
   background: ${(props) => props.theme.red};
   text-align: right;
 `;

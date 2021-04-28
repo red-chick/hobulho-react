@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import firebase from "firebase";
+
 import { useUserContext } from "../../common/contexts/UserContext";
+
 import { Button } from "../../common/styles/Button.style";
 import { Form, Input, Label } from "../../common/styles/Form.style";
 
@@ -8,7 +11,7 @@ const AddQuestionForm = ({ getQuestions }) => {
     state: { uid },
   } = useUserContext();
   const [question, setQuestion] = useState("");
-  const dbRef = useRef(null);
+  const dbRef = useRef<firebase.firestore.Firestore>(null);
 
   useEffect(() => {
     const loadDB = async () => {
@@ -29,7 +32,7 @@ const AddQuestionForm = ({ getQuestions }) => {
 
     dbRef.current
       .collection("questions")
-      .add({ uid, title: question, createdAt: Date.now() })
+      .add({ uid, title: question, createdAt: Date.now(), answers: [] })
       .then(() => {
         getQuestions(dbRef.current);
       });

@@ -1,53 +1,41 @@
-import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
+import firebase from "firebase";
 
 import AddQuestionForm from "../src/home/components/AddQuestionForm";
+import Questions from "../src/home/components/Questions";
 
 import { useUserContext } from "../src/common/contexts/UserContext";
-import { useState } from "react";
-
-// firebase 모듈이 server-side 에서 로드되면 안 됨
-const Questions = dynamic(() => import("../src/home/components/Questions"), {
-  ssr: false,
-});
+import useQuestions from "../src/home/hooks/useQuestions";
+import Loading from "../src/common/components/Loading";
 
 export default function Home() {
   const {
     state: { uid },
   } = useUserContext();
-  const [questions, setQuestions] = useState([]);
-  const [error, setError] = useState("");
 
-  const removeQuestion = (index) => {
-    const newQuestions = [...questions];
-    newQuestions.splice(index, 1);
-    setQuestions(newQuestions);
-  };
+  const { questionsState, getQuestions, removeQuestion } = useQuestions();
+  const { questions, loading, error } = questionsState;
 
-  const getQuestions = (db) => {
-    const questionsRef = db.collection("questions");
-    questionsRef
-      .orderBy("createdAt", "desc")
-      .get()
-      .then((snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setQuestions(data);
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  };
+  const dbRef = useRef<firebase.firestore.Firestore>(null);
+
+  useEffect(() => {
+    const loadDBAndGetQuestions = async () => {
+      let { db } = await import("../src/common/utils/firebase");
+      dbRef.current = db;
+      getQuestions(db);
+    };
+
+    loadDBAndGetQuestions();
+  }, []);
 
   if (error)
     return (
       <Main>
         <Headline>호불호 응답하고 사람들의 생각을 알아보세요!</Headline>
         <Paragraph>
-          여러분의 성원에 힘입어 서버가 터져버렸습니다.. <br />
-          며칠 뒤 이용해 주세요.. 감사합니다..
+          에러가 발생했습니다. <br />
+          잠시 후 이용해주세요 ㅠㅠ
         </Paragraph>
       </Main>
     );
@@ -63,11 +51,14 @@ export default function Home() {
           수 있습니다.
         </Paragraph>
       )}
-      <Questions
-        questions={questions}
-        getQuestions={getQuestions}
-        removeQuestion={removeQuestion}
-      />
+      {loading && <Loading />}
+      {questions.length > 0 && (
+        <Questions
+          questions={questions}
+          removeQuestion={removeQuestion}
+          db={dbRef.current}
+        />
+      )}
     </Main>
   );
 }

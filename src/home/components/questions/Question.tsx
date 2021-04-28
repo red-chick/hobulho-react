@@ -1,14 +1,17 @@
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
-import { db } from "../../../common/utils/firebase";
+import { useMemo, useState, memo } from "react";
+import firebase from "firebase";
+
 import { useUserContext } from "../../../common/contexts/UserContext";
+import { AnswerType, QuestionType } from "../../hooks/useQuestions";
+
 import {
   Item,
   ThumbsUpIcon,
   ThumbsDownIcon,
   IconWrapper,
-  Liked,
-  DisLiked,
+  Like,
+  Dislike,
   SmallThumbsUpIcon,
   SmallThumbsDownIcon,
   LeftCount,
@@ -18,60 +21,79 @@ import {
   Title,
 } from "./Question.style";
 
-const Question = ({ index, question, removeQuestion }) => {
+type Props = {
+  index: number;
+  question: QuestionType;
+  removeQuestion: Function;
+  db: firebase.firestore.Firestore;
+};
+
+const getAnswerSizes = (
+  answers: AnswerType[],
+  likeLength: number,
+  selectedLike?: boolean
+) => {
+  const totalSize = answers.length;
+
+  if (selectedLike === true)
+    return [totalSize + 1, likeLength + 1, totalSize - likeLength];
+
+  if (selectedLike === false)
+    return [totalSize + 1, likeLength, totalSize - likeLength + 1];
+
+  return [totalSize, likeLength, totalSize - likeLength];
+};
+
+const Question = ({ index, question, removeQuestion, db }: Props) => {
+  const router = useRouter();
   const {
     state: { uid },
   } = useUserContext();
-  const router = useRouter();
-  const [answers, setAnswers] = useState([]);
   const [selectedLike, setSelectedLike] = useState(null);
 
-  useEffect(() => {
-    const answersRef = db.collection("answers");
-    answersRef
-      .where("questionId", "==", question.id)
-      .get()
-      .then((snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setAnswers(data);
-      });
-  }, []);
+  const { answers } = question;
 
   const isAnswered = useMemo(() => {
     if (!uid) return false;
     return answers.some((answer) => answer.uid === uid);
   }, [answers, uid]);
 
-  const answersSize = useMemo(() => answers.length, [answers]);
-  const likedSize = useMemo(
+  const likeLength = useMemo(
     () => answers.filter((answer) => answer.like === true).length,
+    [answers]
+  );
+
+  const [totalSize, likeSize, dislikeSize] = useMemo(
+    () => getAnswerSizes(answers, likeLength, selectedLike),
     [answers, selectedLike]
   );
-  const disLikedSize = useMemo(() => answersSize - likedSize, [
-    answers,
-    selectedLike,
-  ]);
 
   const select = (like: boolean) => {
     if (!uid) {
       router.push("/login");
       return;
     }
+
+    if (selectedLike !== null) return;
+
     setSelectedLike(like);
-    db.collection("answers").add({
-      uid,
-      like,
-      questionId: question.id,
-      createdAt: Date.now(),
-    });
+
+    db.collection("questions")
+      .doc(question.id)
+      .update({
+        answers: firebase.firestore.FieldValue.arrayUnion({
+          uid,
+          like,
+          createdAt: Date.now(),
+        }),
+      });
   };
 
   const remove = () => {
-    db.collection("questions").doc(question.id).delete();
-    removeQuestion(index);
+    if (confirm(`${question.title} 질문을 정말로 삭제하시겠습니까?`)) {
+      db.collection("questions").doc(question.id).delete();
+      removeQuestion(index);
+    }
   };
 
   return (
@@ -83,24 +105,14 @@ const Question = ({ index, question, removeQuestion }) => {
       <IconWrapper>
         {isAnswered || selectedLike !== null ? (
           <>
-            <Liked
-              size={likedSize + (selectedLike === true ? 1 : 0)}
-              fullSize={answersSize + (selectedLike !== null ? 1 : 0)}
-            >
+            <Like size={likeSize} totalSize={totalSize}>
               <SmallThumbsUpIcon />
-              <LeftCount>
-                {likedSize + (selectedLike === true ? 1 : 0)}
-              </LeftCount>
-            </Liked>
-            <DisLiked
-              size={disLikedSize + (selectedLike === false ? 1 : 0)}
-              fullSize={answersSize + (selectedLike !== null ? 1 : 0)}
-            >
-              <RightCount>
-                {disLikedSize + (selectedLike === false ? 1 : 0)}
-              </RightCount>
+              <LeftCount>{likeSize}</LeftCount>
+            </Like>
+            <Dislike size={dislikeSize} totalSize={totalSize}>
+              <RightCount>{dislikeSize}</RightCount>
               <SmallThumbsDownIcon />
-            </DisLiked>
+            </Dislike>
           </>
         ) : (
           <>
@@ -113,4 +125,4 @@ const Question = ({ index, question, removeQuestion }) => {
   );
 };
 
-export default Question;
+export default memo(Question);
