@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
-export const Button = styled.button`
+type ButtonProps = {
+  backgroundColor?: string;
+};
+
+export const Button = styled.button<ButtonProps>`
   height: 36px;
   line-height: 36px;
   padding: 0 16px;
@@ -8,7 +12,7 @@ export const Button = styled.button`
   font-weight: 500;
   color: white;
   background: ${(props) => {
-    if (props.color === "green") return props.theme.green;
+    if (props.backgroundColor === "lightblue") return props.theme.lightblue;
     return props.theme.orange;
   }};
   border: none;

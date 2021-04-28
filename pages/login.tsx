@@ -7,7 +7,7 @@ const Login = dynamic(() => import("../src/login/components/Login"), {
   ssr: false,
 });
 
-const login = () => {
+const LoginPage = () => {
   return (
     <Wrapper>
       <Head>
@@ -17,7 +17,7 @@ const login = () => {
       </Head>
       <Title>전화번호로 로그인</Title>
       <Paragraph>
-        중복 투표 방지를 위해 전화번호를 이용해 로그인을 해야합니다.
+        중복 응답 방지를 위해 전화번호를 이용해 로그인을 진행합니다.
         <br />
         인증용 SMS 메시지가 발송되며 이동통신사 문자 메시지 요금이 부과될 수
         있습니다.
@@ -41,4 +41,4 @@ const Paragraph = styled.p`
   margin-bottom: 20px;
 `;
 
-export default login;
+export default LoginPage;

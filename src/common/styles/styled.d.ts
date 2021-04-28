@@ -5,9 +5,7 @@ declare module "styled-component" {
     headerHeight: string;
 
     red: string;
-    yellow: string;
     green: string;
-    blue: string;
-    navy: string;
+    orange: string;
   }
 }
