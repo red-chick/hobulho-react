@@ -8,43 +8,51 @@ import { Form, Input, Label } from "../../common/styles/Form.style";
 
 type Props = {
   db: firebase.firestore.Firestore;
-  getQuestions: Function;
+  addQuestion: Function;
   loadingQuestions: Function;
 };
 
-const AddQuestionForm = ({ db, getQuestions, loadingQuestions }: Props) => {
+const AddQuestionForm = ({ db, addQuestion, loadingQuestions }: Props) => {
   const {
     state: { uid },
   } = useUserContext();
-  const [question, setQuestion] = useState("");
+  const [title, setTitle] = useState("");
 
-  const addQuestion = (e) => {
+  const submit = (e) => {
     e.preventDefault();
 
     loadingQuestions();
 
-    if (question.length < 5) {
+    if (title.length < 5) {
       alert("다섯 글자 이상 입력해 주세요.");
       return;
     }
 
+    const createdAt = Date.now();
+
     db.collection("questions")
-      .add({ uid, title: question, createdAt: Date.now(), answers: [] })
-      .then(() => {
-        getQuestions(db);
+      .add({ uid, title, createdAt, answers: [] })
+      .then(({ id }) => {
+        addQuestion({
+          id,
+          uid,
+          title,
+          createdAt,
+          answers: [],
+        });
       });
 
-    setQuestion("");
+    setTitle("");
   };
 
   return (
-    <Form onSubmit={addQuestion}>
+    <Form onSubmit={submit}>
       <Label>
         <Input
           type="text"
           placeholder="궁금한 내용을 등록해보세요!"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </Label>
       <Button type="submit">질문 등록</Button>

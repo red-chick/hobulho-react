@@ -17,6 +17,7 @@ export default function Home() {
   const {
     questionsState,
     getQuestions,
+    addQuestion,
     removeQuestion,
     loadingQuestions,
   } = useQuestions();
@@ -51,7 +52,7 @@ export default function Home() {
       {uid ? (
         <AddQuestionForm
           db={dbRef.current}
-          getQuestions={getQuestions}
+          addQuestion={addQuestion}
           loadingQuestions={loadingQuestions}
         />
       ) : (

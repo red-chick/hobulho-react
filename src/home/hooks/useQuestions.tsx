@@ -65,12 +65,6 @@ const useQuestions = () => {
     initialQuestionsState
   );
 
-  const removeQuestion = (index) => {
-    const questions = [...questionsState.questions];
-    questions.splice(index, 1);
-    questionsDispatch({ type: "SET_QUESTIONS", questions });
-  };
-
   const getQuestions = (db) => {
     questionsDispatch({ type: "LOADING" });
     const questionsRef = db.collection("questions");
@@ -89,11 +83,28 @@ const useQuestions = () => {
       });
   };
 
+  const removeQuestion = (index) => {
+    const questions = [...questionsState.questions];
+    questions.splice(index, 1);
+    questionsDispatch({ type: "SET_QUESTIONS", questions });
+  };
+
+  const addQuestion = (question: QuestionType) => {
+    const questions = [question, ...questionsState.questions];
+    questionsDispatch({ type: "SET_QUESTIONS", questions });
+  };
+
   const loadingQuestions = () => {
     questionsDispatch({ type: "LOADING" });
   };
 
-  return { questionsState, getQuestions, removeQuestion, loadingQuestions };
+  return {
+    questionsState,
+    getQuestions,
+    addQuestion,
+    removeQuestion,
+    loadingQuestions,
+  };
 };
 
 export default useQuestions;
