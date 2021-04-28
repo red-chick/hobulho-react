@@ -14,11 +14,10 @@ import {
   Dislike,
   SmallThumbsUpIcon,
   SmallThumbsDownIcon,
-  LeftCount,
-  RightCount,
   TrashIcon,
   TitleWrapper,
   Title,
+  ResultContainer,
 } from "./Question.style";
 
 type Props = {
@@ -107,20 +106,20 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
       </TitleWrapper>
       <IconWrapper>
         {myAnswer || selectedLike !== null ? (
-          <>
-            <Like size={likeSize} totalSize={totalSize}>
+          <ResultContainer totalSize={totalSize} likeSize={likeSize}>
+            <Like>
               <SmallThumbsUpIcon
                 selected={myAnswer ? myAnswer.like : selectedLike}
               />
-              <LeftCount>{likeSize}</LeftCount>
+              {likeSize}
             </Like>
-            <Dislike size={dislikeSize} totalSize={totalSize}>
-              <RightCount>{dislikeSize}</RightCount>
+            <Dislike>
+              {dislikeSize}
               <SmallThumbsDownIcon
                 selected={myAnswer ? !myAnswer.like : !selectedLike}
               />
             </Dislike>
-          </>
+          </ResultContainer>
         ) : (
           <>
             <ThumbsUpIcon title="좋아요" onClick={() => select(true)} />

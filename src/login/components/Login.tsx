@@ -54,9 +54,19 @@ const Login = () => {
             onChange={(e) => setPhone(e.target.value)}
           />
         </Label>
-        <Button type="submit" disabled={confirmationState.loading}>
-          {confirmationState.result ? "재요청" : "인증 요청"}
-        </Button>
+        {confirmationState.result ? (
+          <Button
+            type="submit"
+            disabled={confirmationState.loading}
+            backgroundColor="lightblue"
+          >
+            재요청
+          </Button>
+        ) : (
+          <Button type="submit" disabled={confirmationState.loading}>
+            인증 요청
+          </Button>
+        )}
       </Form>
       {confirmationState.loading && <Paragraph>인증 요청중입니다..</Paragraph>}
       {confirmationState.error && (
@@ -73,9 +83,7 @@ const Login = () => {
                 onChange={(e) => setAuth(e.target.value)}
               />
             </Label>
-            <Button color="green" type="submit">
-              로그인
-            </Button>
+            <Button type="submit">로그인</Button>
           </Form>
           <Paragraph>
             인증용 SMS 메시지가 발송되었습니다. 잠시 후 입력하신 번호로 SMS
