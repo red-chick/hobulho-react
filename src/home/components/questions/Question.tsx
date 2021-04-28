@@ -93,7 +93,9 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
 
   const remove = () => {
     if (confirm(`${question.title} 질문을 정말로 삭제하시겠습니까?`)) {
-      db.collection("questions").doc(question.id).delete();
+      db.collection("questions").doc(question.id).update({
+        hide: true,
+      });
       removeQuestion(index);
     }
   };

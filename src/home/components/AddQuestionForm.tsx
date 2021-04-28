@@ -31,7 +31,7 @@ const AddQuestionForm = ({ db, addQuestion, loadingQuestions }: Props) => {
     const createdAt = Date.now();
 
     db.collection("questions")
-      .add({ uid, title, createdAt, answers: [] })
+      .add({ uid, title, createdAt, answers: [], hide: false })
       .then(({ id }) => {
         addQuestion({
           id,

@@ -69,6 +69,8 @@ const useQuestions = () => {
     questionsDispatch({ type: "LOADING" });
     const questionsRef = db.collection("questions");
     questionsRef
+      .where("hide", "!=", true)
+      .orderBy("hide")
       .orderBy("createdAt", "desc")
       .get()
       .then((snapshot) => {
