@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import firebase from "firebase";
 
 import { firebaseApp } from "../../common/utils/firebase";
@@ -29,7 +29,7 @@ const Login = () => {
     );
   }, []);
 
-  const onPhoneNumberAuth = (e) => {
+  const onPhoneNumberAuth = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     confirmationDispatch({ type: "LOADING" });
     firebaseApp
@@ -39,7 +39,7 @@ const Login = () => {
       .catch((error) => confirmationDispatch({ type: "ERROR", error }));
   };
 
-  const onAuthCode = (e) => {
+  const onAuthCode = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!confirmationState.result) return;
     loginDispatch({ type: "LOADING" });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 import { Button } from "../../common/styles/Button.style";
 import { Form, Input, Label } from "../../common/styles/Form.style";
@@ -10,7 +10,7 @@ type Props = {
 const AddQuestionForm: React.FC<Props> = ({ addQuestion }) => {
   const [title, setTitle] = useState("");
 
-  const submit = async (e) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (title.length < 5) {

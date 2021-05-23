@@ -83,7 +83,7 @@ function QuestionsReducer(
       return {
         loading: false,
         error: null,
-        questions: state.questions.map((question) => {
+        questions: state.questions.map((question: QuestionType) => {
           if (question.id === action.id) {
             const answers = [
               ...question.answers,
