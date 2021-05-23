@@ -17,10 +17,4 @@ firebaseApp.auth().languageCode = "ko";
 
 export const db = firebaseApp.firestore();
 
-export const newRecaptchaVerifier = () => {
-  return new firebase.auth.RecaptchaVerifier("recaptcha-container", {
-    size: "invisible",
-  });
-};
-
-export default { db, firebaseApp, newRecaptchaVerifier };
+export default { db, firebaseApp };

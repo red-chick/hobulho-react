@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import firebase from "firebase";
 
-import { firebaseApp, newRecaptchaVerifier } from "../../common/utils/firebase";
+import { firebaseApp } from "../../common/utils/firebase";
 
 import useConfirmationReducer from "../hooks/useConfimationReducer";
 import useLoginReducer from "../hooks/useLoginReducer";
@@ -21,7 +22,11 @@ const Login = () => {
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
 
   useEffect(() => {
-    setRecaptchaVerifier(newRecaptchaVerifier());
+    setRecaptchaVerifier(
+      new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+        size: "invisible",
+      })
+    );
   }, []);
 
   const onPhoneNumberAuth = (e) => {

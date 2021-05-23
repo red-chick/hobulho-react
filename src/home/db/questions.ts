@@ -31,11 +31,9 @@ export const addOne = async (uid: string, createdAt: number, title: String) => {
 export const hideOne = async (id: string) => {
   const db = await asyncGetDB();
 
-  const snapshot = await db.collection("questions").doc(id).update({
+  await db.collection("questions").doc(id).update({
     hide: true,
   });
-
-  return snapshot;
 };
 
 export const addAnswer = async (
