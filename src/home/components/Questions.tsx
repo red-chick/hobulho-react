@@ -7,9 +7,10 @@ import { QuestionsContainer } from "./Questions.style";
 type Props = {
   questions: QuestionType[];
   removeQuestion: Function;
+  addAnswer: Function;
 };
 
-const Questions = ({ questions, removeQuestion }: Props) => {
+const Questions = ({ questions, removeQuestion, addAnswer }: Props) => {
   return (
     <QuestionsContainer>
       {questions.length > 0 &&
@@ -19,6 +20,7 @@ const Questions = ({ questions, removeQuestion }: Props) => {
             index={index}
             question={question}
             removeQuestion={removeQuestion}
+            addAnswer={addAnswer}
           />
         ))}
     </QuestionsContainer>

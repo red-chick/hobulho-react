@@ -36,7 +36,7 @@ export const hideOne = async (id: string) => {
   });
 };
 
-export const addAnswer = async (
+export const updateNewAnswer = async (
   questionId: string,
   uid: string,
   like: boolean,

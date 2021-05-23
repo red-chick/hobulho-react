@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
-import { useMemo, useState, memo } from "react";
-import firebase from "firebase/app";
+import { useMemo, memo } from "react";
 
 import { useUserContext } from "../../../common/contexts/UserContext";
-import { AnswerType, QuestionType } from "../../hooks/useQuestions";
+import { QuestionType } from "../../hooks/useQuestions";
 
 import {
   Item,
@@ -19,56 +18,36 @@ import {
   Title,
   ResultContainer,
 } from "./Question.style";
-import { addAnswer } from "../../db/questions";
 
 type Props = {
   index: number;
   question: QuestionType;
   removeQuestion: Function;
+  addAnswer: Function;
 };
 
-const getAnswerSizes = (
-  answers: AnswerType[],
-  myAnswer: AnswerType,
-  likeLength: number,
-  selectedLike?: boolean
-) => {
-  const totalSize = answers.length;
-
-  if (myAnswer) return [totalSize, likeLength, totalSize - likeLength];
-
-  if (selectedLike === true)
-    return [totalSize + 1, likeLength + 1, totalSize - likeLength];
-
-  if (selectedLike === false)
-    return [totalSize + 1, likeLength, totalSize - likeLength + 1];
-
-  return [totalSize, likeLength, totalSize - likeLength];
-};
-
-const Question: React.FC<Props> = ({ index, question, removeQuestion }) => {
+const Question: React.FC<Props> = ({
+  index,
+  question,
+  removeQuestion,
+  addAnswer,
+}) => {
   const router = useRouter();
   const {
     state: { uid },
   } = useUserContext();
-  const [selectedLike, setSelectedLike] = useState(null);
 
-  const { answers } = question;
+  const { id, answers } = question;
+
+  const [totalCount, likeCount, dislikeCount] = useMemo(() => {
+    const count = answers.filter((answer) => answer.like === true).length;
+    return [answers.length, count, answers.length - count];
+  }, [answers]);
 
   const myAnswer = useMemo(() => {
     if (!uid) return null;
-    return answers.filter((answer) => answer.uid === uid)[0];
+    return answers.find((answer) => answer.uid === uid);
   }, [answers, uid]);
-
-  const likeLength = useMemo(
-    () => answers.filter((answer) => answer.like === true).length,
-    [answers]
-  );
-
-  const [totalSize, likeSize, dislikeSize] = useMemo(
-    () => getAnswerSizes(answers, myAnswer, likeLength, selectedLike),
-    [answers, selectedLike, myAnswer]
-  );
 
   const select = async (like: boolean) => {
     if (!uid) {
@@ -76,18 +55,11 @@ const Question: React.FC<Props> = ({ index, question, removeQuestion }) => {
       return;
     }
 
-    if (selectedLike !== null) return;
-
-    setSelectedLike(like);
-
-    const createdAt = Date.now();
-
-    addAnswer(question.id, uid, like, createdAt);
+    addAnswer(id, like);
   };
 
   const remove = async () => {
     if (confirm(`${question.title} 질문을 정말로 삭제하시겠습니까?`)) {
-      const { id } = question;
       removeQuestion(index, id);
     }
   };
@@ -99,19 +71,15 @@ const Question: React.FC<Props> = ({ index, question, removeQuestion }) => {
         {question.uid === uid && <TrashIcon onClick={remove} />}
       </TitleWrapper>
       <IconWrapper>
-        {myAnswer || selectedLike !== null ? (
-          <ResultContainer totalSize={totalSize} likeSize={likeSize}>
+        {myAnswer ? (
+          <ResultContainer totalCount={totalCount} likeCount={likeCount}>
             <Like>
-              <SmallThumbsUpIcon
-                selected={myAnswer ? myAnswer.like : selectedLike}
-              />
-              {likeSize}
+              <SmallThumbsUpIcon selected={myAnswer.like} />
+              {likeCount}
             </Like>
             <Dislike>
-              {dislikeSize}
-              <SmallThumbsDownIcon
-                selected={myAnswer ? !myAnswer.like : !selectedLike}
-              />
+              {dislikeCount}
+              <SmallThumbsDownIcon selected={!myAnswer.like} />
             </Dislike>
           </ResultContainer>
         ) : (

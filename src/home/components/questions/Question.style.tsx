@@ -101,13 +101,13 @@ export const SmallThumbsDownIcon = styled.i<SmallThumbsType>`
   margin: 0 8px 0 4px;
 `;
 
-const getPercent = (totalSize, size) => {
-  return `${(size / totalSize) * 100}%`;
+const getPercent = (totalCount, size) => {
+  return `${(size / totalCount) * 100}%`;
 };
 
 type ResultContainerType = {
-  totalSize: number;
-  likeSize: number;
+  totalCount: number;
+  likeCount: number;
 };
 
 export const ResultContainer = styled.section<ResultContainerType>`
@@ -117,9 +117,9 @@ export const ResultContainer = styled.section<ResultContainerType>`
     to right,
     ${(props) => props.theme.lightblue} 0%,
     ${(props) => props.theme.lightblue}
-      ${(props) => getPercent(props.totalSize, props.likeSize)},
+      ${(props) => getPercent(props.totalCount, props.likeCount)},
     ${(props) => props.theme.lightred}
-      ${(props) => getPercent(props.totalSize, props.likeSize)},
+      ${(props) => getPercent(props.totalCount, props.likeCount)},
     ${(props) => props.theme.lightred} 100%
   );
   height: 24px;

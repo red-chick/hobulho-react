@@ -13,9 +13,13 @@ export default function Home() {
     state: { uid },
   } = useUserContext();
 
-  const { questionsState, getQuestions, addQuestion, removeQuestion } =
-    useQuestions();
-  const { questions, loading, error } = questionsState;
+  const {
+    questionsState: { questions, loading, error },
+    getQuestions,
+    addQuestion,
+    removeQuestion,
+    addAnswer,
+  } = useQuestions();
 
   useEffect(() => {
     getQuestions();
@@ -44,7 +48,11 @@ export default function Home() {
         </Paragraph>
       )}
       {questions.length > 0 && (
-        <Questions questions={questions} removeQuestion={removeQuestion} />
+        <Questions
+          questions={questions}
+          removeQuestion={removeQuestion}
+          addAnswer={addAnswer}
+        />
       )}
       {loading && <Loading />}
     </Main>

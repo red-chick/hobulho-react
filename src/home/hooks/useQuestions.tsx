@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import { useUserContext } from "../../common/contexts/UserContext";
-import { getAll, addOne, hideOne } from "../db/questions";
+import { getAll, addOne, hideOne, updateNewAnswer } from "../db/questions";
 
 export type AnswerType = {
   like: boolean;
@@ -33,7 +33,14 @@ type QuestionsActionType =
   | { type: "ERROR"; error: any }
   | { type: "SET_QUESTIONS"; questions: QuestionType[] }
   | { type: "ADD_QUESTION"; question: QuestionType }
-  | { type: "REMOVE_QUESTION"; index: number };
+  | { type: "REMOVE_QUESTION"; index: number }
+  | {
+      type: "ADD_ANSWER";
+      id: string;
+      uid: string;
+      like: boolean;
+      createdAt: number;
+    };
 
 function QuestionsReducer(
   state: QuestionsStateType,
@@ -67,11 +74,32 @@ function QuestionsReducer(
     case "REMOVE_QUESTION":
       const questions = [...state.questions];
       questions.splice(action.index, 1);
-
       return {
         loading: false,
         error: null,
         questions,
+      };
+    case "ADD_ANSWER":
+      return {
+        loading: false,
+        error: null,
+        questions: state.questions.map((question) => {
+          if (question.id === action.id) {
+            const answers = [
+              ...question.answers,
+              {
+                uid: action.uid,
+                like: action.like,
+                createdAt: action.createdAt,
+              },
+            ];
+            return {
+              ...question,
+              answers,
+            };
+          }
+          return question;
+        }),
       };
     default:
       return state;
@@ -140,11 +168,20 @@ const useQuestions = () => {
     }
   };
 
+  const addAnswer = async (id: string, like: boolean) => {
+    const createdAt = Date.now();
+
+    questionsDispatch({ type: "ADD_ANSWER", id, uid, like, createdAt });
+
+    updateNewAnswer(id, uid, like, createdAt);
+  };
+
   return {
     questionsState,
     getQuestions,
     addQuestion,
     removeQuestion,
+    addAnswer,
   };
 };
 
