@@ -1,4 +1,6 @@
 import { useReducer } from "react";
+import { useUserContext } from "../../common/contexts/UserContext";
+import { getAll, addOne, hideOne } from "../db/questions";
 
 export type AnswerType = {
   like: boolean;
@@ -29,7 +31,9 @@ const initialQuestionsState = {
 type QuestionsActionType =
   | { type: "LOADING" }
   | { type: "ERROR"; error: any }
-  | { type: "SET_QUESTIONS"; questions: QuestionType[] };
+  | { type: "SET_QUESTIONS"; questions: QuestionType[] }
+  | { type: "ADD_QUESTION"; question: QuestionType }
+  | { type: "REMOVE_QUESTION"; index: number };
 
 function QuestionsReducer(
   state: QuestionsStateType,
@@ -54,6 +58,21 @@ function QuestionsReducer(
         error: null,
         questions: action.questions,
       };
+    case "ADD_QUESTION":
+      return {
+        loading: false,
+        error: null,
+        questions: [action.question, ...state.questions],
+      };
+    case "REMOVE_QUESTION":
+      const questions = [...state.questions];
+      questions.splice(action.index, 1);
+
+      return {
+        loading: false,
+        error: null,
+        questions,
+      };
     default:
       return state;
   }
@@ -64,40 +83,61 @@ const useQuestions = () => {
     QuestionsReducer,
     initialQuestionsState
   );
+  const {
+    state: { uid },
+  } = useUserContext();
 
-  const getQuestions = (db) => {
+  const getQuestions = async () => {
     questionsDispatch({ type: "LOADING" });
-    const questionsRef = db.collection("questions");
-    questionsRef
-      .where("hide", "!=", true)
-      .orderBy("hide")
-      .orderBy("createdAt", "desc")
-      .get()
-      .then((snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        questionsDispatch({ type: "SET_QUESTIONS", questions: data });
-      })
-      .catch((error) => {
-        questionsDispatch({ type: "ERROR", error });
+
+    try {
+      const { docs } = await getAll();
+
+      const questions = docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      questionsDispatch({
+        type: "SET_QUESTIONS",
+        questions: questions as QuestionType[],
       });
+    } catch (error) {
+      questionsDispatch({ type: "ERROR", error });
+    }
   };
 
-  const removeQuestion = (index) => {
-    const questions = [...questionsState.questions];
-    questions.splice(index, 1);
-    questionsDispatch({ type: "SET_QUESTIONS", questions });
-  };
-
-  const addQuestion = (question: QuestionType) => {
-    const questions = [question, ...questionsState.questions];
-    questionsDispatch({ type: "SET_QUESTIONS", questions });
-  };
-
-  const loadingQuestions = () => {
+  const removeQuestion = async (index: number, id: string) => {
     questionsDispatch({ type: "LOADING" });
+
+    try {
+      await hideOne(id);
+      questionsDispatch({ type: "REMOVE_QUESTION", index });
+    } catch (error) {
+      questionsDispatch({ type: "ERROR", error });
+    }
+  };
+
+  const addQuestion = async (title: string) => {
+    questionsDispatch({ type: "LOADING" });
+
+    try {
+      const createdAt = Date.now();
+      const { id } = await addOne(uid, createdAt, title);
+
+      questionsDispatch({
+        type: "ADD_QUESTION",
+        question: {
+          id,
+          uid,
+          title,
+          createdAt,
+          answers: [],
+        },
+      });
+    } catch (error) {
+      questionsDispatch({ type: "ERROR", error });
+    }
   };
 
   return {
@@ -105,7 +145,6 @@ const useQuestions = () => {
     getQuestions,
     addQuestion,
     removeQuestion,
-    loadingQuestions,
   };
 };
 

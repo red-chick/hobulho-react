@@ -1,46 +1,24 @@
 import { useState } from "react";
-import firebase from "firebase/app";
-
-import { useUserContext } from "../../common/contexts/UserContext";
 
 import { Button } from "../../common/styles/Button.style";
 import { Form, Input, Label } from "../../common/styles/Form.style";
 
 type Props = {
-  db: firebase.firestore.Firestore;
   addQuestion: Function;
-  loadingQuestions: Function;
 };
 
-const AddQuestionForm = ({ db, addQuestion, loadingQuestions }: Props) => {
-  const {
-    state: { uid },
-  } = useUserContext();
+const AddQuestionForm: React.FC<Props> = ({ addQuestion }) => {
   const [title, setTitle] = useState("");
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-
-    loadingQuestions();
 
     if (title.length < 5) {
       alert("다섯 글자 이상 입력해 주세요.");
       return;
     }
 
-    const createdAt = Date.now();
-
-    db.collection("questions")
-      .add({ uid, title, createdAt, answers: [], hide: false })
-      .then(({ id }) => {
-        addQuestion({
-          id,
-          uid,
-          title,
-          createdAt,
-          answers: [],
-        });
-      });
+    await addQuestion(title);
 
     setTitle("");
   };

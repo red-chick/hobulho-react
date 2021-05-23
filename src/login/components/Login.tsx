@@ -13,11 +13,12 @@ import Loading from "../../common/components/Loading";
 
 const Login = () => {
   const router = useRouter();
+  const [confirmationState, confirmationDispatch] = useConfirmationReducer();
+  const [loginState, loginDispatch] = useLoginReducer();
+
   const [phone, setPhone] = useState("");
   const [auth, setAuth] = useState("");
   const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
-  const [confirmationState, confirmationDispatch] = useConfirmationReducer();
-  const [loginState, loginDispatch] = useLoginReducer();
 
   useEffect(() => {
     setRecaptchaVerifier(newRecaptchaVerifier());

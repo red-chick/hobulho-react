@@ -19,12 +19,12 @@ import {
   Title,
   ResultContainer,
 } from "./Question.style";
+import { addAnswer } from "../../db/questions";
 
 type Props = {
   index: number;
   question: QuestionType;
   removeQuestion: Function;
-  db: firebase.firestore.Firestore;
 };
 
 const getAnswerSizes = (
@@ -46,7 +46,7 @@ const getAnswerSizes = (
   return [totalSize, likeLength, totalSize - likeLength];
 };
 
-const Question = ({ index, question, removeQuestion, db }: Props) => {
+const Question: React.FC<Props> = ({ index, question, removeQuestion }) => {
   const router = useRouter();
   const {
     state: { uid },
@@ -70,7 +70,7 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
     [answers, selectedLike, myAnswer]
   );
 
-  const select = (like: boolean) => {
+  const select = async (like: boolean) => {
     if (!uid) {
       router.push("/login");
       return;
@@ -80,23 +80,15 @@ const Question = ({ index, question, removeQuestion, db }: Props) => {
 
     setSelectedLike(like);
 
-    db.collection("questions")
-      .doc(question.id)
-      .update({
-        answers: firebase.firestore.FieldValue.arrayUnion({
-          uid,
-          like,
-          createdAt: Date.now(),
-        }),
-      });
+    const createdAt = Date.now();
+
+    addAnswer(question.id, uid, like, createdAt);
   };
 
-  const remove = () => {
+  const remove = async () => {
     if (confirm(`${question.title} 질문을 정말로 삭제하시겠습니까?`)) {
-      db.collection("questions").doc(question.id).update({
-        hide: true,
-      });
-      removeQuestion(index);
+      const { id } = question;
+      removeQuestion(index, id);
     }
   };
 
