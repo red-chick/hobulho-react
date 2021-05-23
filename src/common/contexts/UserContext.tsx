@@ -22,12 +22,6 @@ const initialState: StateType = {
   error: undefined,
 };
 
-const loadingState: StateType = {
-  loading: true,
-  uid: undefined,
-  error: undefined,
-};
-
 export const GET_USER = "GET_USER";
 export const GET_USER_SUCCESS = "GET_USER_SUCCESS";
 export const GET_USER_ERROR = "GET_USER_ERROR";
@@ -38,6 +32,12 @@ type ActionType =
   | { type: typeof GET_USER_SUCCESS; data: string }
   | { type: typeof GET_USER_ERROR; error: string }
   | { type: typeof GET_USER_NO_AUTH };
+
+const loading = () => ({
+  loading: true,
+  uid: undefined,
+  error: undefined,
+});
 
 const success = (data: string) => ({
   uid: data,
@@ -63,7 +63,7 @@ const userReducer: Reducer<StateType, ActionType> = (
 ) => {
   switch (action.type) {
     case GET_USER:
-      return loadingState;
+      return loading();
     case GET_USER_SUCCESS:
       return success(action.data);
     case GET_USER_ERROR:
@@ -109,16 +109,19 @@ type Props = {
   children: ReactNode;
 };
 
+const asyncGetFirebaseApp = async () => {
+  const { firebaseApp } = await import("../utils/firebase");
+  return firebaseApp;
+};
+
 export const UserContextProvider: React.FC<Props> = ({ children }: Props) => {
-  const [state, dispatch] = useReducer(userReducer, initialState);
-  const firebaseAppRef = useRef(null);
   const router = useRouter();
+  const [state, dispatch] = useReducer(userReducer, initialState);
 
   useEffect(() => {
     const fetchAuth = async () => {
       try {
-        let { firebaseApp } = await import("../utils/firebase");
-        firebaseAppRef.current = firebaseApp;
+        const firebaseApp = await asyncGetFirebaseApp();
         firebaseApp.auth().onAuthStateChanged((user) => {
           dispatchGetUser(dispatch);
           if (user) {
@@ -136,14 +139,19 @@ export const UserContextProvider: React.FC<Props> = ({ children }: Props) => {
     fetchAuth();
   }, []);
 
-  const logout = () => {
-    if (firebaseAppRef.current) {
-      firebaseAppRef.current.auth().signOut();
-    }
+  const logout = async () => {
+    const firebaseApp = await asyncGetFirebaseApp();
+    firebaseApp.auth().signOut();
   };
 
   return (
-    <UserContext.Provider value={{ state, dispatch, logout }}>
+    <UserContext.Provider
+      value={{
+        state,
+        dispatch,
+        logout,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

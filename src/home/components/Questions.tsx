@@ -1,5 +1,3 @@
-import firebase from "firebase/app";
-
 import Question from "./questions/Question";
 
 import { QuestionType } from "../hooks/useQuestions";
@@ -9,10 +7,10 @@ import { QuestionsContainer } from "./Questions.style";
 type Props = {
   questions: QuestionType[];
   removeQuestion: Function;
-  db: firebase.firestore.Firestore;
+  addAnswer: Function;
 };
 
-const Questions = ({ questions, removeQuestion, db }: Props) => {
+const Questions = ({ questions, removeQuestion, addAnswer }: Props) => {
   return (
     <QuestionsContainer>
       {questions.length > 0 &&
@@ -22,7 +20,7 @@ const Questions = ({ questions, removeQuestion, db }: Props) => {
             index={index}
             question={question}
             removeQuestion={removeQuestion}
-            db={db}
+            addAnswer={addAnswer}
           />
         ))}
     </QuestionsContainer>

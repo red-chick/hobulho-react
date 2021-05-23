@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
-import firebase from "firebase/app";
 
 import AddQuestionForm from "../src/home/components/AddQuestionForm";
 import Questions from "../src/home/components/Questions";
@@ -15,24 +14,15 @@ export default function Home() {
   } = useUserContext();
 
   const {
-    questionsState,
+    questionsState: { questions, loading, error },
     getQuestions,
     addQuestion,
     removeQuestion,
-    loadingQuestions,
+    addAnswer,
   } = useQuestions();
-  const { questions, loading, error } = questionsState;
-
-  const dbRef = useRef<firebase.firestore.Firestore>(null);
 
   useEffect(() => {
-    const loadDBAndGetQuestions = async () => {
-      let { db } = await import("../src/common/utils/firebase");
-      dbRef.current = db;
-      getQuestions(db);
-    };
-
-    loadDBAndGetQuestions();
+    getQuestions();
   }, []);
 
   if (error)
@@ -50,11 +40,7 @@ export default function Home() {
     <Main>
       <Headline>호불호 응답하고 사람들의 생각을 알아보세요!</Headline>
       {uid ? (
-        <AddQuestionForm
-          db={dbRef.current}
-          addQuestion={addQuestion}
-          loadingQuestions={loadingQuestions}
-        />
+        <AddQuestionForm addQuestion={addQuestion} />
       ) : (
         <Paragraph>
           로그인 후 질문에 응답하면 해당 질문에 대한 사람들의 응답을 확인 하실
@@ -65,7 +51,7 @@ export default function Home() {
         <Questions
           questions={questions}
           removeQuestion={removeQuestion}
-          db={dbRef.current}
+          addAnswer={addAnswer}
         />
       )}
       {loading && <Loading />}

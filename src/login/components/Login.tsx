@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import firebase from "firebase";
 
-import { firebaseApp, newRecaptchaVerifier } from "../../common/utils/firebase";
+import { firebaseApp } from "../../common/utils/firebase";
 
 import useConfirmationReducer from "../hooks/useConfimationReducer";
 import useLoginReducer from "../hooks/useLoginReducer";
@@ -13,17 +14,22 @@ import Loading from "../../common/components/Loading";
 
 const Login = () => {
   const router = useRouter();
-  const [phone, setPhone] = useState("");
-  const [auth, setAuth] = useState("");
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
   const [confirmationState, confirmationDispatch] = useConfirmationReducer();
   const [loginState, loginDispatch] = useLoginReducer();
 
+  const [phone, setPhone] = useState("");
+  const [auth, setAuth] = useState("");
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
+
   useEffect(() => {
-    setRecaptchaVerifier(newRecaptchaVerifier());
+    setRecaptchaVerifier(
+      new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+        size: "invisible",
+      })
+    );
   }, []);
 
-  const onPhoneNumberAuth = (e) => {
+  const onPhoneNumberAuth = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     confirmationDispatch({ type: "LOADING" });
     firebaseApp
@@ -33,7 +39,7 @@ const Login = () => {
       .catch((error) => confirmationDispatch({ type: "ERROR", error }));
   };
 
-  const onAuthCode = (e) => {
+  const onAuthCode = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!confirmationState.result) return;
     loginDispatch({ type: "LOADING" });
