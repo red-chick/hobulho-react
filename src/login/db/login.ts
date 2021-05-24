@@ -1,6 +1,6 @@
 import firebase from "firebase";
 
-import { firebaseApp } from "../../common/utils/firebase";
+import { db, firebaseApp } from "../../common/utils/firebase";
 
 export const signInWithPhoneNumber = async (
   phone: string,
@@ -16,6 +16,14 @@ export const confirmAuth = async (
   result: firebase.auth.ConfirmationResult
 ) => {
   return result.confirm(auth);
+};
+
+export const checkUser = async (uid: string) => {
+  return db.collection("users").where("uid", "==", uid).get();
+};
+
+export const addUser = async (uid: string, phone: string) => {
+  return db.collection("users").add({ uid, phone, gender: null, age: null });
 };
 
 export const loginConfirm = async () => {};

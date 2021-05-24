@@ -2,7 +2,12 @@ import { useEffect, useReducer, useState } from "react";
 import firebase from "firebase";
 import { useRouter } from "next/router";
 
-import { confirmAuth, signInWithPhoneNumber } from "../db/login";
+import {
+  addUser,
+  checkUser,
+  confirmAuth,
+  signInWithPhoneNumber,
+} from "../db/login";
 
 type LoginStateType = {
   loading: boolean;
@@ -80,7 +85,7 @@ const useLogin = (): [
   ConfirmationStateType,
   LoginStateType,
   (phone: string) => void,
-  (auth: string) => void
+  (auth: string, phone: string) => void
 ] => {
   const router = useRouter();
 
@@ -114,13 +119,17 @@ const useLogin = (): [
     }
   };
 
-  const login = async (auth: string) => {
+  const login = async (auth: string, phone: string) => {
     if (!confirmationState.result) return;
 
     loginDispatch({ type: "LOADING" });
 
     try {
-      const result = await confirmAuth(auth, confirmationState.result);
+      const {
+        user: { uid },
+      } = await confirmAuth(auth, confirmationState.result);
+      const { docs } = await checkUser(uid);
+      if (docs.length <= 0) await addUser(uid, phone);
       router.push("/");
     } catch (error) {
       loginDispatch({ type: "ERROR", error });

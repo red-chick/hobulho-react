@@ -21,7 +21,7 @@ const Login = () => {
 
   const onAuthCode = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    login(auth);
+    login(auth, phone);
   };
 
   return (
