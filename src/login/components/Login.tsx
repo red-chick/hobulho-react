@@ -1,20 +1,18 @@
-import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 
-import useConfirmationReducer from "../hooks/useConfimationReducer";
-import useLoginReducer from "../hooks/useLoginReducer";
+import useLogin from "../hooks/useLogin";
+
+import Loading from "../../common/components/Loading";
 
 import { Paragraph } from "./Login.style";
 import { Button } from "../../common/styles/Button.style";
 import { Form, Input, Label } from "../../common/styles/Form.style";
-import Loading from "../../common/components/Loading";
 
 const Login = () => {
-  const [confirmationState, requestAuth] = useConfirmationReducer();
-  const [loginState, login] = useLoginReducer();
-
   const [phone, setPhone] = useState("");
   const [auth, setAuth] = useState("");
+
+  const [confirmationState, loginState, requestAuth, login] = useLogin();
 
   const onPhoneNumberAuth = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +21,7 @@ const Login = () => {
 
   const onAuthCode = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    login(confirmationState.result, auth);
+    login(auth);
   };
 
   return (
