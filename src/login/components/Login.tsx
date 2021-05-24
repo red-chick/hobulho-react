@@ -1,8 +1,5 @@
 import { useRouter } from "next/router";
-import { FormEvent, useEffect, useState } from "react";
-import firebase from "firebase";
-
-import { firebaseApp } from "../../common/utils/firebase";
+import { FormEvent, useState } from "react";
 
 import useConfirmationReducer from "../hooks/useConfimationReducer";
 import useLoginReducer from "../hooks/useLoginReducer";
@@ -13,40 +10,20 @@ import { Form, Input, Label } from "../../common/styles/Form.style";
 import Loading from "../../common/components/Loading";
 
 const Login = () => {
-  const router = useRouter();
-  const [confirmationState, confirmationDispatch] = useConfirmationReducer();
-  const [loginState, loginDispatch] = useLoginReducer();
+  const [confirmationState, requestAuth] = useConfirmationReducer();
+  const [loginState, login] = useLoginReducer();
 
   const [phone, setPhone] = useState("");
   const [auth, setAuth] = useState("");
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
-
-  useEffect(() => {
-    setRecaptchaVerifier(
-      new firebase.auth.RecaptchaVerifier("recaptcha-container", {
-        size: "invisible",
-      })
-    );
-  }, []);
 
   const onPhoneNumberAuth = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    confirmationDispatch({ type: "LOADING" });
-    firebaseApp
-      .auth()
-      .signInWithPhoneNumber(`+82${phone}`, recaptchaVerifier)
-      .then((result) => confirmationDispatch({ type: "SET_RESULT", result }))
-      .catch((error) => confirmationDispatch({ type: "ERROR", error }));
+    requestAuth(phone);
   };
 
   const onAuthCode = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!confirmationState.result) return;
-    loginDispatch({ type: "LOADING" });
-    confirmationState.result
-      .confirm(auth)
-      .then(() => router.push("/"))
-      .catch((error) => loginDispatch({ type: "ERROR", error }));
+    login(confirmationState.result, auth);
   };
 
   return (

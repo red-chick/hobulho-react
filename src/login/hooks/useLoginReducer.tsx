@@ -1,4 +1,6 @@
 import { Dispatch, useReducer } from "react";
+import firebase from "firebase";
+import { useRouter } from "next/router";
 
 type LoginStateType = {
   loading: boolean;
@@ -29,13 +31,34 @@ function loginReducer(state: LoginStateType, action: LoginActionType) {
   }
 }
 
-const useLoginReducer = (): [LoginStateType, Dispatch<LoginActionType>] => {
+const useLoginReducer = (): [
+  LoginStateType,
+  (confirmationResult: firebase.auth.ConfirmationResult, auth: string) => void
+] => {
+  const router = useRouter();
   const [loginState, loginDispatch] = useReducer(
     loginReducer,
     initialLoginState
   );
 
-  return [loginState, loginDispatch];
+  const login = (
+    confirmationResult: firebase.auth.ConfirmationResult,
+    auth: string
+  ) => {
+    if (!confirmationResult) return;
+
+    loginDispatch({ type: "LOADING" });
+
+    confirmationResult
+      .confirm(auth)
+      .then(({ user: { uid } }) => {
+        // console.log("uid", uid);
+        router.push("/");
+      })
+      .catch((error) => loginDispatch({ type: "ERROR", error }));
+  };
+
+  return [loginState, login];
 };
 
 export default useLoginReducer;

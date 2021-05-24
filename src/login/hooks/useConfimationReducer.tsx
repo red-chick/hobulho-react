@@ -1,5 +1,6 @@
 import firebase from "firebase";
-import { Dispatch, useReducer } from "react";
+import { Dispatch, useEffect, useReducer, useState } from "react";
+import { firebaseApp } from "../../common/utils/firebase";
 
 type ConfirmationStateType = {
   loading: boolean;
@@ -46,14 +47,32 @@ function confirmationReducer(
 
 const useConfirmationReducer = (): [
   ConfirmationStateType,
-  Dispatch<ConfirmationActionType>
+  (phone: string) => void
 ] => {
   const [confirmationState, confirmationDispatch] = useReducer(
     confirmationReducer,
     initialConfirmationState
   );
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
 
-  return [confirmationState, confirmationDispatch];
+  useEffect(() => {
+    setRecaptchaVerifier(
+      new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+        size: "invisible",
+      })
+    );
+  }, []);
+
+  const requestAuth = (phone: string) => {
+    confirmationDispatch({ type: "LOADING" });
+    firebaseApp
+      .auth()
+      .signInWithPhoneNumber(`+82${phone}`, recaptchaVerifier)
+      .then((result) => confirmationDispatch({ type: "SET_RESULT", result }))
+      .catch((error) => confirmationDispatch({ type: "ERROR", error }));
+  };
+
+  return [confirmationState, requestAuth];
 };
 
 export default useConfirmationReducer;
