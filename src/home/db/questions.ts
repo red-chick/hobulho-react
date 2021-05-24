@@ -5,7 +5,10 @@ const asyncGetDB = async () => {
   return db;
 };
 
-export const getAll = async () => {
+export const getAllToLimit = async (
+  limit: number,
+  lastVisible?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+) => {
   const db = await asyncGetDB();
 
   const snapshot = await db
@@ -13,6 +16,8 @@ export const getAll = async () => {
     .where("hide", "!=", true)
     .orderBy("hide")
     .orderBy("createdAt", "desc")
+    .startAfter(lastVisible)
+    .limit(limit)
     .get();
 
   return snapshot;

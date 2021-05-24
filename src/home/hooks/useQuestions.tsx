@@ -1,6 +1,13 @@
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 import { useUserContext } from "../../common/contexts/UserContext";
-import { getAll, addOne, hideOne, updateNewAnswer } from "../db/questions";
+import {
+  getAllToLimit,
+  addOne,
+  hideOne,
+  updateNewAnswer,
+} from "../db/questions";
+
+import firebase from "firebase";
 
 export type AnswerType = {
   like: boolean;
@@ -30,8 +37,9 @@ const initialQuestionsState = {
 
 type QuestionsActionType =
   | { type: "LOADING" }
+  | { type: "END_LOADING" }
   | { type: "ERROR"; error: any }
-  | { type: "SET_QUESTIONS"; questions: QuestionType[] }
+  | { type: "ADD_QUESTIONS"; questions: QuestionType[] }
   | { type: "ADD_QUESTION"; question: QuestionType }
   | { type: "REMOVE_QUESTION"; index: number }
   | {
@@ -53,17 +61,23 @@ function QuestionsReducer(
         loading: true,
         error: null,
       };
+    case "END_LOADING":
+      return {
+        ...state,
+        loading: false,
+        error: null,
+      };
     case "ERROR":
       return {
         loading: false,
         error: action.error,
         questions: [],
       };
-    case "SET_QUESTIONS":
+    case "ADD_QUESTIONS":
       return {
         loading: false,
         error: null,
-        questions: action.questions,
+        questions: [...state.questions, ...action.questions],
       };
     case "ADD_QUESTION":
       return {
@@ -106,6 +120,8 @@ function QuestionsReducer(
   }
 }
 
+const LIMIT = 30;
+
 const useQuestions = () => {
   const [questionsState, questionsDispatch] = useReducer(
     QuestionsReducer,
@@ -115,11 +131,23 @@ const useQuestions = () => {
     state: { uid },
   } = useUserContext();
 
+  const lastVisibleRef =
+    useRef<
+      firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    >(null);
+  const isEndQuestions = useRef(false);
+
   const getQuestions = async () => {
+    if (isEndQuestions.current) return;
+
     questionsDispatch({ type: "LOADING" });
 
     try {
-      const { docs } = await getAll();
+      const { docs } = await getAllToLimit(LIMIT, lastVisibleRef.current);
+
+      if (docs.length < LIMIT) isEndQuestions.current = true;
+
+      lastVisibleRef.current = docs[docs.length - 1];
 
       const questions = docs.map((doc) => ({
         id: doc.id,
@@ -127,7 +155,7 @@ const useQuestions = () => {
       }));
 
       questionsDispatch({
-        type: "SET_QUESTIONS",
+        type: "ADD_QUESTIONS",
         questions: questions as QuestionType[],
       });
     } catch (error) {
