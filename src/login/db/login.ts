@@ -18,12 +18,12 @@ export const confirmAuth = async (
   return result.confirm(auth);
 };
 
-export const checkUser = async (uid: string) => {
+export const getUser = async (uid: string) => {
   return db.collection("users").where("uid", "==", uid).get();
 };
 
 export const addUser = async (uid: string, phone: string) => {
-  return db.collection("users").add({ uid, phone, gender: null, age: null });
+  return db
+    .collection("users")
+    .add({ uid, phone, birthYear: null, gender: null });
 };
-
-export const loginConfirm = async () => {};

@@ -17,7 +17,7 @@ const Header = () => {
         <Title>호불호</Title>
       </Link>
       <ButtonWrapper>
-        {router.pathname !== "/login" &&
+        {!["/login", "/information"].includes(router.pathname) &&
           !loading &&
           (uid ? (
             <Button onClick={() => logout()}>로그아웃</Button>

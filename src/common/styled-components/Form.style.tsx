@@ -2,8 +2,16 @@ import styled from "styled-components";
 
 export const Form = styled.form`
   margin: 20px 0 0;
-  display: flex;
-  justify-content: center;
+  display: block;
+  text-align: center;
+
+  & > section {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 
   @media screen and (max-width: 700px) {
     flex-direction: column;
@@ -11,7 +19,8 @@ export const Form = styled.form`
   }
 `;
 
-export const Label = styled.label`
+export const Control = styled.section`
+  display: block;
   font-size: 18px;
 
   @media screen and (max-width: 700px) {

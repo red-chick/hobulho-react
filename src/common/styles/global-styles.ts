@@ -18,6 +18,18 @@ html, body {
 h1, h2, h3, h4, h5, h6, p {
   margin: 0;
 }
+
+h1, h2, h3, h4, h5, h6{
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
 `;
 
 export default GlobalStyles;

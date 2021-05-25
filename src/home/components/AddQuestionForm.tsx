@@ -1,7 +1,11 @@
 import { FormEvent, useState } from "react";
 import { Button } from "../../common/styled-components/Button.style";
 
-import { Form, Input, Label } from "../../common/styled-components/Form.style";
+import {
+  Form,
+  Input,
+  Control,
+} from "../../common/styled-components/Form.style";
 
 type Props = {
   addQuestion: Function;
@@ -25,17 +29,17 @@ const AddQuestionForm: React.FC<Props> = ({ addQuestion }) => {
 
   return (
     <Form onSubmit={submit}>
-      <Label>
+      <Control>
         <Input
           type="text"
           placeholder="궁금한 내용을 등록해보세요!"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-      </Label>
-      <Button type="submit" className="is-primary">
-        질문 등록
-      </Button>
+        <Button type="submit" className="is-primary">
+          질문 등록
+        </Button>
+      </Control>
     </Form>
   );
 };

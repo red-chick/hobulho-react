@@ -11,7 +11,7 @@ const informationPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Title>회원 정보 등록</Title>
-      <Paragraph>회원님의 정보를 두 가지만 알려주세요!</Paragraph>
+      <Paragraph>저희에게 회원님의 정보를 두 가지만 알려주세요!</Paragraph>
       <InformationForm />
     </Wrapper>
   );

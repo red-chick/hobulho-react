@@ -5,7 +5,11 @@ import useLogin from "../hooks/useLogin";
 import Loading from "../../common/components/Loading";
 
 import { Paragraph } from "./Login.style";
-import { Form, Input, Label } from "../../common/styled-components/Form.style";
+import {
+  Form,
+  Input,
+  Control,
+} from "../../common/styled-components/Form.style";
 import { Button } from "../../common/styled-components/Button.style";
 
 const Login = () => {
@@ -27,33 +31,33 @@ const Login = () => {
   return (
     <>
       <Form onSubmit={onPhoneNumberAuth}>
-        <Label>
+        <Control>
           <Input
             type="text"
             placeholder="'-' 없이 입력해주세요"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
-        </Label>
-        {confirmationState.result ? (
-          <Button
-            type="submit"
-            className={`${confirmationState.loading ? "is-loading" : ""}`}
-            disabled={confirmationState.loading}
-          >
-            재요청
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            className={`is-primary ${
-              confirmationState.loading ? "is-loading" : ""
-            }`}
-            disabled={confirmationState.loading}
-          >
-            인증 요청
-          </Button>
-        )}
+          {confirmationState.result ? (
+            <Button
+              type="submit"
+              className={`${confirmationState.loading ? "is-loading" : ""}`}
+              disabled={confirmationState.loading}
+            >
+              재요청
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className={`is-primary ${
+                confirmationState.loading ? "is-loading" : ""
+              }`}
+              disabled={confirmationState.loading}
+            >
+              인증 요청
+            </Button>
+          )}
+        </Control>
       </Form>
       {confirmationState.loading && <Paragraph>인증 요청중입니다..</Paragraph>}
       {confirmationState.error && (
@@ -62,20 +66,22 @@ const Login = () => {
       {confirmationState.result && (
         <>
           <Form onSubmit={onAuthCode}>
-            <Label>
+            <Control>
               <Input
                 type="text"
                 placeholder="인증번호 6자리를 입력해주세요"
                 value={auth}
                 onChange={(e) => setAuth(e.target.value)}
               />
-            </Label>
-            <Button
-              type="submit"
-              className={`is-primary ${loginState.loading ? "is-loading" : ""}`}
-            >
-              로그인
-            </Button>
+              <Button
+                type="submit"
+                className={`is-primary ${
+                  loginState.loading ? "is-loading" : ""
+                }`}
+              >
+                로그인
+              </Button>
+            </Control>
           </Form>
           <Paragraph>
             인증용 SMS 메시지가 발송되었습니다. 잠시 후 입력하신 번호로 SMS

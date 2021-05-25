@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import {
   addUser,
-  checkUser,
+  getUser,
   confirmAuth,
   signInWithPhoneNumber,
 } from "../db/login";
@@ -128,9 +128,15 @@ const useLogin = (): [
       const {
         user: { uid },
       } = await confirmAuth(auth, confirmationState.result);
-      const { docs } = await checkUser(uid);
-      if (docs.length <= 0) await addUser(uid, phone);
-      router.push("/");
+      const { docs } = await getUser(uid);
+      if (docs.length <= 0) {
+        await addUser(uid, phone);
+        router.push("/information");
+      } else {
+        const { gender, birthYear } = docs[0].data();
+        if (!gender || !birthYear) router.push("/information");
+        router.push("/");
+      }
     } catch (error) {
       loginDispatch({ type: "ERROR", error });
     }
