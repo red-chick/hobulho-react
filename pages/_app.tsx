@@ -7,6 +7,8 @@ import UserContextProvider from "../src/common/contexts/UserContext";
 import GlobalStyles from "../src/common/styles/global-styles";
 import theme from "../src/common/styles/theme";
 
+import "../src/common/styles/bulma.min.css";
+
 const App = ({ Component, pageProps }) => {
   return (
     <>

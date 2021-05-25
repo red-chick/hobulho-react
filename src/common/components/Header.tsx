@@ -3,8 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useUserContext } from "../contexts/UserContext";
-
-import { Button } from "../styles/Button.style";
+import { Button } from "../styled-components/Button.style";
 
 const Header = () => {
   const {

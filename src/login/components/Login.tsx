@@ -5,8 +5,8 @@ import useLogin from "../hooks/useLogin";
 import Loading from "../../common/components/Loading";
 
 import { Paragraph } from "./Login.style";
-import { Button } from "../../common/styles/Button.style";
-import { Form, Input, Label } from "../../common/styles/Form.style";
+import { Form, Input, Label } from "../../common/styled-components/Form.style";
+import { Button } from "../../common/styled-components/Button.style";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -38,13 +38,19 @@ const Login = () => {
         {confirmationState.result ? (
           <Button
             type="submit"
+            className={`${confirmationState.loading ? "is-loading" : ""}`}
             disabled={confirmationState.loading}
-            backgroundColor="lightblue"
           >
             재요청
           </Button>
         ) : (
-          <Button type="submit" disabled={confirmationState.loading}>
+          <Button
+            type="submit"
+            className={`is-primary ${
+              confirmationState.loading ? "is-loading" : ""
+            }`}
+            disabled={confirmationState.loading}
+          >
             인증 요청
           </Button>
         )}
@@ -64,7 +70,12 @@ const Login = () => {
                 onChange={(e) => setAuth(e.target.value)}
               />
             </Label>
-            <Button type="submit">로그인</Button>
+            <Button
+              type="submit"
+              className={`is-primary ${loginState.loading ? "is-loading" : ""}`}
+            >
+              로그인
+            </Button>
           </Form>
           <Paragraph>
             인증용 SMS 메시지가 발송되었습니다. 잠시 후 입력하신 번호로 SMS
