@@ -46,9 +46,7 @@ export default function Home() {
   return (
     <Main>
       <Headline>호불호 응답하고 사람들의 생각을 알아보세요!</Headline>
-      {uid ? (
-        <AddQuestionForm addQuestion={addQuestion} />
-      ) : (
+      {!uid && (
         <Paragraph>
           로그인 후 질문에 응답하면 해당 질문에 대한 사람들의 응답을 확인 하실
           수 있습니다.

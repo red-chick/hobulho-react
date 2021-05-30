@@ -20,7 +20,12 @@ const Header = () => {
         {!["/login", "/information"].includes(router.pathname) &&
           !loading &&
           (uid ? (
-            <Button onClick={() => logout()}>로그아웃</Button>
+            <>
+              <Link href={`/${uid}`}>
+                <Button>내 질문</Button>
+              </Link>
+              <Button onClick={() => logout()}>로그아웃</Button>
+            </>
           ) : (
             <Link href="/login">
               <Button>로그인</Button>
@@ -46,6 +51,14 @@ const Title = styled.h1`
 const ButtonWrapper = styled.section`
   display: inline-block;
   margin-left: auto;
+
+  & > button {
+    margin-right: 10px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 `;
 
 export default Header;
