@@ -20,6 +20,7 @@ const ProfilePage = () => {
       {!loading && !isUser && <p>잘못 된 접근입니다.</p>}
       <h1>내 질문 목록</h1>
       {uid && isOneSelf && <AddQuestionForm addQuestion={addQuestion} />}
+      {questions.length <= 0 && <Paragraph>등록 된 질문이 없습니다.</Paragraph>}
       <Questions
         questions={questions}
         removeQuestion={removeQuestion}
@@ -34,6 +35,10 @@ export const Main = styled.main`
   flex-direction: column;
   align-items: center;
   padding: 20px;
+`;
+
+export const Paragraph = styled.p`
+  margin: 40px 0 0;
 `;
 
 export default ProfilePage;
