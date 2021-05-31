@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { setScrollEvent } from "../../common/utils/scroll";
+import { setScrollEvent } from "../utils/scroll";
 
 const BOTTOM = 100;
 

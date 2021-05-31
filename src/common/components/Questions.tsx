@@ -1,6 +1,6 @@
 import Question from "./questions/Question";
 
-import { QuestionType } from "../hooks/useQuestions";
+import { QuestionType } from "../../home/hooks/useQuestions";
 
 import { QuestionsContainer } from "./Questions.style";
 

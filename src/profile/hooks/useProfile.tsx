@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { useUserContext } from "../../common/contexts/UserContext";
-import { QuestionType } from "../../home/hooks/useQuestions";
 import {
+  addOneAnswer,
   addOneQuestion,
-  getQuestionsToLimit,
-  getUser,
+  getUserQuestions,
   hideOneQuestion,
-  updateNewAnswer,
-} from "../db/profile";
+} from "../../common/db/questions";
+import { QuestionType } from "../../home/hooks/useQuestions";
+import { getUser } from "../db/profile";
 
 type ProfileStateType = {
   loading: boolean;
@@ -116,9 +116,8 @@ function profileReducer(state: ProfileStateType, action: ProfileActionType) {
 
 const useProfile = () => {
   const { query } = useRouter();
-  const {
-    state: { uid },
-  } = useUserContext();
+  const { state: userState } = useUserContext();
+  const alreadyGetQuestions = useRef(false);
 
   const [profileState, profileDispatch] = useReducer(
     profileReducer,
@@ -126,8 +125,10 @@ const useProfile = () => {
   );
 
   useEffect(() => {
-    if (query.uid && uid) {
+    if (query.uid && !userState.loading && !alreadyGetQuestions.current) {
       (async () => {
+        alreadyGetQuestions.current = true;
+
         const { docs } = await getUser(query.uid as string);
         const userDoc = docs[0];
 
@@ -137,8 +138,8 @@ const useProfile = () => {
         if (userDoc) {
           const user = userDoc.data();
           isUser = true;
-          isOneSelf = user.uid === uid;
-          getQuestions();
+          isOneSelf = user.uid === userState.uid;
+          getQuestions(user.uid);
         }
 
         profileDispatch({
@@ -148,13 +149,13 @@ const useProfile = () => {
         });
       })();
     }
-  }, [query, uid]);
+  }, [query, userState]);
 
-  const getQuestions = async () => {
+  const getQuestions = async (uid: string) => {
     profileDispatch({ type: "LOADING" });
 
     try {
-      const { docs } = await getQuestionsToLimit(uid, 30, null);
+      const { docs } = await getUserQuestions(uid, 30, null);
 
       // if (docs.length < LIMIT) isEndQuestions.current = true;
 
@@ -180,6 +181,7 @@ const useProfile = () => {
 
     try {
       const createdAt = Date.now();
+      const { uid } = userState;
       const { id } = await addOneQuestion(uid, createdAt, title);
 
       profileDispatch({
@@ -210,10 +212,11 @@ const useProfile = () => {
 
   const addAnswer = async (id: string, like: boolean) => {
     const createdAt = Date.now();
+    const { uid } = userState;
 
     profileDispatch({ type: "ADD_ANSWER", id, uid, like, createdAt });
 
-    updateNewAnswer(id, uid, like, createdAt);
+    addOneAnswer(id, uid, like, createdAt);
   };
 
   return { profileState, addQuestion, removeQuestion, addAnswer };

@@ -1,19 +1,25 @@
 import styled from "styled-components";
 import Loading from "../src/common/components/Loading";
-import AddQuestionForm from "../src/home/components/AddQuestionForm";
-import Questions from "../src/home/components/Questions";
+import AddQuestionForm from "../src/profile/components/AddQuestionForm";
+import Questions from "../src/common/components/Questions";
 import useProfile from "../src/profile/hooks/useProfile";
+import { useUserContext } from "../src/common/contexts/UserContext";
 
 const ProfilePage = () => {
+  const {
+    state: { uid },
+  } = useUserContext();
   const { profileState, addQuestion, removeQuestion, addAnswer } = useProfile();
   const { loading, error, isUser, isOneSelf, questions } = profileState;
+
+  if (error) return <p>에러가 발생했습니다.</p>;
 
   return (
     <Main>
       {loading && <Loading />}
       {!loading && !isUser && <p>잘못 된 접근입니다.</p>}
       <h1>내 질문 목록</h1>
-      <AddQuestionForm addQuestion={addQuestion} />
+      {uid && isOneSelf && <AddQuestionForm addQuestion={addQuestion} />}
       <Questions
         questions={questions}
         removeQuestion={removeQuestion}

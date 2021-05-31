@@ -1,13 +1,12 @@
 import { useReducer, useRef } from "react";
 import { useUserContext } from "../../common/contexts/UserContext";
-import {
-  getAllToLimit,
-  addOne,
-  hideOne,
-  updateNewAnswer,
-} from "../db/questions";
 
 import firebase from "firebase";
+import {
+  addOneAnswer,
+  getAllQuestions,
+  hideOneQuestion,
+} from "../../common/db/questions";
 
 export type AnswerType = {
   like: boolean;
@@ -40,7 +39,6 @@ type QuestionsActionType =
   | { type: "END_LOADING" }
   | { type: "ERROR"; error: any }
   | { type: "ADD_QUESTIONS"; questions: QuestionType[] }
-  | { type: "ADD_QUESTION"; question: QuestionType }
   | { type: "REMOVE_QUESTION"; index: number }
   | {
       type: "ADD_ANSWER";
@@ -78,12 +76,6 @@ function QuestionsReducer(
         loading: false,
         error: null,
         questions: [...state.questions, ...action.questions],
-      };
-    case "ADD_QUESTION":
-      return {
-        loading: false,
-        error: null,
-        questions: [action.question, ...state.questions],
       };
     case "REMOVE_QUESTION":
       const questions = [...state.questions];
@@ -143,7 +135,7 @@ const useQuestions = () => {
     questionsDispatch({ type: "LOADING" });
 
     try {
-      const { docs } = await getAllToLimit(LIMIT, lastVisibleRef.current);
+      const { docs } = await getAllQuestions(LIMIT, lastVisibleRef.current);
 
       if (docs.length < LIMIT) isEndQuestions.current = true;
 
@@ -167,30 +159,8 @@ const useQuestions = () => {
     questionsDispatch({ type: "LOADING" });
 
     try {
-      await hideOne(id);
+      await hideOneQuestion(id);
       questionsDispatch({ type: "REMOVE_QUESTION", index });
-    } catch (error) {
-      questionsDispatch({ type: "ERROR", error });
-    }
-  };
-
-  const addQuestion = async (title: string) => {
-    questionsDispatch({ type: "LOADING" });
-
-    try {
-      const createdAt = Date.now();
-      const { id } = await addOne(uid, createdAt, title);
-
-      questionsDispatch({
-        type: "ADD_QUESTION",
-        question: {
-          id,
-          uid,
-          title,
-          createdAt,
-          answers: [],
-        },
-      });
     } catch (error) {
       questionsDispatch({ type: "ERROR", error });
     }
@@ -201,13 +171,12 @@ const useQuestions = () => {
 
     questionsDispatch({ type: "ADD_ANSWER", id, uid, like, createdAt });
 
-    updateNewAnswer(id, uid, like, createdAt);
+    addOneAnswer(id, uid, like, createdAt);
   };
 
   return {
     questionsState,
     getQuestions,
-    addQuestion,
     removeQuestion,
     addAnswer,
   };

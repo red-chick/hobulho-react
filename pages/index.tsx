@@ -1,13 +1,11 @@
 import { useCallback, useEffect } from "react";
 import styled from "styled-components";
 
-import AddQuestionForm from "../src/home/components/AddQuestionForm";
-import Questions from "../src/home/components/Questions";
-
 import { useUserContext } from "../src/common/contexts/UserContext";
 import useQuestions from "../src/home/hooks/useQuestions";
 import Loading from "../src/common/components/Loading";
-import useInfinityScroll from "../src/home/hooks/useInfinityScroll";
+import useInfinityScroll from "../src/common/hooks/useInfinityScroll";
+import Questions from "../src/common/components/Questions";
 
 export default function Home() {
   const {
@@ -17,7 +15,6 @@ export default function Home() {
   const {
     questionsState: { questions, loading, error },
     getQuestions,
-    addQuestion,
     removeQuestion,
     addAnswer,
   } = useQuestions();

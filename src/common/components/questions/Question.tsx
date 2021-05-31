@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useMemo, memo } from "react";
 
-import { useUserContext } from "../../../common/contexts/UserContext";
-import { QuestionType } from "../../hooks/useQuestions";
+import { useUserContext } from "../../contexts/UserContext";
+import { QuestionType } from "../../../home/hooks/useQuestions";
 
 import {
   Item,

@@ -5,7 +5,7 @@ const asyncGetDB = async () => {
   return db;
 };
 
-export const getAllToLimit = async (
+export const getAllQuestions = async (
   limit: number,
   lastVisible?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
 ) => {
@@ -23,7 +23,31 @@ export const getAllToLimit = async (
   return snapshot;
 };
 
-export const addOne = async (uid: string, createdAt: number, title: String) => {
+export const getUserQuestions = async (
+  uid: string,
+  limit: number,
+  lastVisible?: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+) => {
+  const db = await asyncGetDB();
+
+  const snapshot = await db
+    .collection("questions")
+    .where("uid", "==", uid)
+    .where("hide", "!=", true)
+    .orderBy("hide")
+    .orderBy("createdAt", "desc")
+    .startAfter(lastVisible)
+    .limit(limit)
+    .get();
+
+  return snapshot;
+};
+
+export const addOneQuestion = async (
+  uid: string,
+  createdAt: number,
+  title: String
+) => {
   const db = await asyncGetDB();
 
   const snapshot = await db
@@ -33,7 +57,7 @@ export const addOne = async (uid: string, createdAt: number, title: String) => {
   return snapshot;
 };
 
-export const hideOne = async (id: string) => {
+export const hideOneQuestion = async (id: string) => {
   const db = await asyncGetDB();
 
   await db.collection("questions").doc(id).update({
@@ -41,7 +65,7 @@ export const hideOne = async (id: string) => {
   });
 };
 
-export const updateNewAnswer = async (
+export const addOneAnswer = async (
   questionId: string,
   uid: string,
   like: boolean,

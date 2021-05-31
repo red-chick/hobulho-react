@@ -46,13 +46,13 @@ const success = (data: string) => ({
 });
 
 const fail = (error: string) => ({
-  user: undefined,
+  uid: undefined,
   loading: false,
   error,
 });
 
 const noAuth = () => ({
-  user: undefined,
+  uid: undefined,
   loading: false,
   error: undefined,
 });
@@ -123,7 +123,6 @@ export const UserContextProvider: React.FC<Props> = ({ children }: Props) => {
       try {
         const firebaseApp = await asyncGetFirebaseApp();
         firebaseApp.auth().onAuthStateChanged((user) => {
-          dispatchGetUser(dispatch);
           if (user) {
             dispatchGetUserSuccess(dispatch, user.uid);
             if (router.pathname === "/login") router.push("/");

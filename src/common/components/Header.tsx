@@ -21,9 +21,12 @@ const Header = () => {
           !loading &&
           (uid ? (
             <>
-              <Link href={`/${uid}`}>
-                <Button>내 질문</Button>
-              </Link>
+              {!router.query.uid && (
+                <Link href={`/${uid}`}>
+                  <Button>내 질문</Button>
+                </Link>
+              )}
+
               <Button onClick={() => logout()}>로그아웃</Button>
             </>
           ) : (
