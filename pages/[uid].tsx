@@ -12,12 +12,12 @@ const ProfilePage = () => {
   const { profileState, addQuestion, removeQuestion, addAnswer } = useProfile();
   const { loading, error, isUser, isOneSelf, questions } = profileState;
 
-  if (error) return <p>에러가 발생했습니다.</p>;
+  if (error) return <Paragraph>에러가 발생했습니다.</Paragraph>;
+  if (!loading && !isUser) return <Paragraph>잘못 된 접근입니다.</Paragraph>;
 
   return (
     <Main>
       {loading && <Loading />}
-      {!loading && !isUser && <p>잘못 된 접근입니다.</p>}
       <h1>내 질문 목록</h1>
       {uid && isOneSelf && <AddQuestionForm addQuestion={addQuestion} />}
       {!loading && questions.length <= 0 && (
@@ -41,6 +41,7 @@ export const Main = styled.main`
 
 export const Paragraph = styled.p`
   margin: 40px 0 0;
+  text-align: center;
 `;
 
 export default ProfilePage;
