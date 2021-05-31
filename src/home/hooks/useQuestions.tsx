@@ -1,4 +1,4 @@
-import { useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import { useUserContext } from "../../common/contexts/UserContext";
 
 import firebase from "firebase";
@@ -7,6 +7,7 @@ import {
   getAllQuestions,
   hideOneQuestion,
 } from "../../common/db/questions";
+import useInfinityScroll from "../../common/hooks/useInfinityScroll";
 
 export type AnswerType = {
   like: boolean;
@@ -128,6 +129,16 @@ const useQuestions = () => {
       firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
     >(null);
   const isEndQuestions = useRef(false);
+
+  useEffect(() => {
+    getQuestions();
+  }, []);
+
+  useInfinityScroll(
+    useCallback(() => {
+      getQuestions();
+    }, [])
+  );
 
   const getQuestions = async () => {
     if (isEndQuestions.current) return;

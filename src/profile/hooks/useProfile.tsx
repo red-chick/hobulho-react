@@ -1,5 +1,6 @@
+import firebase from "firebase";
 import { useRouter } from "next/router";
-import { useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import { useUserContext } from "../../common/contexts/UserContext";
 import {
   addOneAnswer,
@@ -7,6 +8,7 @@ import {
   getUserQuestions,
   hideOneQuestion,
 } from "../../common/db/questions";
+import useInfinityScroll from "../../common/hooks/useInfinityScroll";
 import { QuestionType } from "../../home/hooks/useQuestions";
 import { getUser } from "../db/profile";
 
@@ -114,10 +116,18 @@ function profileReducer(state: ProfileStateType, action: ProfileActionType) {
   }
 }
 
+const LIMIT = 30;
+
 const useProfile = () => {
   const { query } = useRouter();
   const { state: userState } = useUserContext();
   const alreadyGetQuestions = useRef(false);
+  const isEndQuestions = useRef(false);
+  const lastVisibleRef =
+    useRef<
+      firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    >(null);
+  const uidRef = useRef<string>(null);
 
   const [profileState, profileDispatch] = useReducer(
     profileReducer,
@@ -139,7 +149,8 @@ const useProfile = () => {
           const user = userDoc.data();
           isUser = true;
           isOneSelf = user.uid === userState.uid;
-          getQuestions(user.uid);
+          uidRef.current = user.uid;
+          await getQuestions();
         }
 
         profileDispatch({
@@ -151,15 +162,27 @@ const useProfile = () => {
     }
   }, [query, userState]);
 
-  const getQuestions = async (uid: string) => {
+  useInfinityScroll(
+    useCallback(() => {
+      getQuestions();
+    }, [])
+  );
+
+  const getQuestions = async () => {
+    if (isEndQuestions.current) return;
+
     profileDispatch({ type: "LOADING" });
 
     try {
-      const { docs } = await getUserQuestions(uid, 30, null);
+      const { docs } = await getUserQuestions(
+        uidRef.current,
+        LIMIT,
+        lastVisibleRef.current
+      );
 
-      // if (docs.length < LIMIT) isEndQuestions.current = true;
+      if (docs.length < LIMIT) isEndQuestions.current = true;
 
-      // lastVisibleRef.current = docs[docs.length - 1];
+      lastVisibleRef.current = docs[docs.length - 1];
 
       const questions = docs.map((doc) => ({
         id: doc.id,
